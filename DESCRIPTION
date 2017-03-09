@@ -7,7 +7,11 @@ Authors@R: person("First", "Last", email = "first.last@example.com", role = c("a
 Description: More about what it does (maybe more than one line)
 Imports:
     dplyr,
-    ggplot2
+    ggplot2,
+    graphics,
+    epibasix, 
+    Hmisc, 
+    lattice
 License: What license is it under?
 LazyData: TRUE
 RoxygenNote: 5.0.1
