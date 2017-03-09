@@ -89,8 +89,6 @@ subtract <-function(x,y){
 #' @examples
 #' binSensgraph (220, 380)
 
-
-
 binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 {
   if (length(x) == 1) { # in case your are passing # of discocordant pairs
