@@ -22,8 +22,8 @@ add <- function(x,y){
 #' @param y  Count of pairs where onlytreated has outcome.
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
-#' binSensgraph (1, 1)
-#' binsSensgraph (10, 1)
+#' subtract (1, 1)
+#' subtract (10, 1)
 
 subtract <-function(x,y){
   x-y

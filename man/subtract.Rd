@@ -18,7 +18,7 @@ The sum of \code{x} and \code{y}.
 Visualizing sensivity results
 }
 \examples{
-binSensgraph (1, 1)
-binsSensgraph (10, 1)
+subtract (1, 1)
+subtract (10, 1)
 }
 
