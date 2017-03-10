@@ -98,7 +98,7 @@ ampPlot <- function (gamma, lambda)
 #' @param y  Count of pairs where onlytreated has outcome.
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
-#' binSensgraph (220, 380)
+#' binSensgraph (220, 450)
 
 binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 {
@@ -144,20 +144,21 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
   hrz = round(bounds[bounds$min == min(bounds$min), ]$pupper,2)
 
 
-  #ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt,y=hrz,hjust=1.3,label=paste0("(",vrt,",",hrz,")"))+labs(title = "Binary Outcome Sensitivity Plot")
+ k= ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt+0.2,y=hrz,label=paste0("(",vrt,",",hrz,")"))+labs(title = "Binary Outcome Sensitivity Plot")
 
-  plot(bounds$pupper ~ bounds$gamma, type = "l", xlab = "Gamma", ylab = "p-val upper bound", main = "Sensitivity plot for binary outcomes")
-  text(vrt,hrz,paste0("(",vrt,",",hrz,")"),pos = 2)
-  points(vrt,hrz,pch=15)
+  #plot(bounds$pupper ~ bounds$gamma, type = "l", xlab = "Gamma", ylab = "p-val upper bound", main = "Sensitivity plot for binary outcomes")
+ # text(vrt,hrz,paste0("(",vrt,",",hrz,")"),pos = 2)
+ # points(vrt,hrz,pch=15)
 
 
   colnames(bounds) <- c("Gamma", "Lower bound", "Upper bound")
   msg <- "Rosenbaum Sensitivity Test \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
   Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
-              msg = msg, bounds = bounds, note = note)
+              msg = msg, bounds = bounds, note = note,plot=k)
   class(Obj) <- c("rbounds", class(Obj))
   Obj
+
 }
 
 
