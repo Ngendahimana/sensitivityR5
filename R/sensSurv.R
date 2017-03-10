@@ -74,19 +74,21 @@ rubinRules = function(data,Treatment,matchscore="ps",covlist){
 #' Amplifying and visualizing gamma parameter
 #'
 #' @param gamma  gamma parameter to be amplfied.
-#' @param lambda  vector of n-fold increase in odds of treatment.
-#' @return The sum of \code{x} and \code{y}.
+#' @param lambda  vector of 3 possible n-fold increase in odds of treatment to be amplified.
+#' @return An amplification plot.
 #' @examples
-#' ampPlot(10, 1)
+#' ampPlot(10, c(12,13,30))
 
 ampPlot <- function (gamma, lambda)
 {
+
   stopifnot(length(gamma) == 1)
   stopifnot(gamma > 1)
   stopifnot(min(lambda) > gamma)
   delta <- (gamma * lambda - 1)/(lambda - gamma)
-  plot(lambda,delta,type = "l")
-
+  #plot(lambda,delta,type = "l")
+  sensdata=data.frame(lambda,delta)
+  ggplot(sensdata, aes(x=lambda, y=delta)) +geom_line()+theme_bw()+annotate("text",x=sensdata[1,1],y=sensdata[1,2],hjust=-.5,label=paste0("(",sensdata[1,1],",",sensdata[1,2],")"))+annotate("text",x=sensdata[2,1],y=sensdata[2,2],hjust=-.5,label=paste0("(",sensdata[2,1],",",sensdata[2,2],")"))+annotate("text",x=sensdata[3,1],y=sensdata[3,2],hjust=1.2,label=paste0("(",sensdata[3,1],",",sensdata[3,2],")"))+geom_point()
 }
 
 

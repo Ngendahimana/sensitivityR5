@@ -9,15 +9,15 @@ ampPlot(gamma, lambda)
 \arguments{
 \item{gamma}{gamma parameter to be amplfied.}
 
-\item{lambda}{vector of n-fold increase in odds of treatment.}
+\item{lambda}{vector of 3 possible n-fold increase in odds of treatment to be amplified.}
 }
 \value{
-The sum of \code{x} and \code{y}.
+An amplification plot.
 }
 \description{
 Amplifying and visualizing gamma parameter
 }
 \examples{
-ampPlot(10, 1)
+ampPlot(10, c(12,13,20))
 }
 
