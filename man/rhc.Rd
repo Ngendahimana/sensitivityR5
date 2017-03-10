@@ -22,7 +22,7 @@ rhc
 }
 \description{
 This dataset was used in Connors et al. (1996): The effectiveness of RHC in the initial care of critically
- ill patients. J American Medical Association 276:889-897. The dataset pertains to day 1 of hospitalizatio#' n, i.e., the 'treatment' variable swang1 is whether or not a patient received a RHC (also called the Swan
+ ill patients. J American Medical Association 276:889-897. The dataset pertains to day 1 of hospitalization, i.e., the 'treatment' variable swang1 is whether or not a patient received a RHC (also called the Swan
  -Ganz catheter) on the first day in which the patient qualified for the SUPPORT study (see above)
 }
 \keyword{datasets}
