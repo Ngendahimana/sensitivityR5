@@ -71,17 +71,22 @@ rubinRules = function(data,Treatment,matchscore="ps",covlist){
 }
 
 
-#' Visualizing sensivity results
+#' Amplifying and visualizing gamma parameter
 #'
-#' @param x  Count of pairs where only control has outcome.
-#' @param y  Count of pairs where onlytreated has outcome.
+#' @param gamma  gamma parameter to be amplfied.
+#' @param lambda  vector of n-fold increase in odds of treatment.
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
-#' subtract (1, 1)
-#' subtract (10, 1)
+#' ampPlot(10, 1)
 
-subtract <-function(x,y){
-  x-y
+ampPlot <- function (gamma, lambda)
+{
+  stopifnot(length(gamma) == 1)
+  stopifnot(gamma > 1)
+  stopifnot(min(lambda) > gamma)
+  delta <- (gamma * lambda - 1)/(lambda - gamma)
+  plot(lambda,delta,type = "l")
+
 }
 
 
