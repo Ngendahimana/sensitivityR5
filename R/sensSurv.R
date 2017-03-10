@@ -140,11 +140,13 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 
   bounds$min = abs(alpha - bounds$pupper)
 
-  vrt = round(bounds[bounds$min == min(bounds$min), ]$gamma,2)
-  hrz = round(bounds[bounds$min == min(bounds$min), ]$pupper,2)
+  vrt =bounds[bounds$min == min(bounds$min), ]$gamma
+  hrz = bounds[bounds$min == min(bounds$min), ]$pupper
+  vrt1 = round(bounds[bounds$min == min(bounds$min), ]$gamma,2)
+  hrz1 = round(bounds[bounds$min == min(bounds$min), ]$pupper,2)
 
 
- k= ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt+0.2,y=hrz,label=paste0("(",vrt,",",hrz,")"))+labs(title = "Binary Outcome Sensitivity Plot")
+ k= ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt1+0.1,y=hrz1,label=paste0("(",vrt1,",",hrz1,")"))+labs(title = "Binary Outcome Sensitivity Plot")
 
   #plot(bounds$pupper ~ bounds$gamma, type = "l", xlab = "Gamma", ylab = "p-val upper bound", main = "Sensitivity plot for binary outcomes")
  # text(vrt,hrz,paste0("(",vrt,",",hrz,")"),pos = 2)
