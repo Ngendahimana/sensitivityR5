@@ -21,7 +21,7 @@
 toy
 }
 \description{
-The Data Set is 100\% fictional. It has three outcomes, with no missing observations anywhere. We #' assume that a logical argument suggests that the square of `covA`, as well as the interactions of #' `covB` with `covC` and with `covD` should be related to treatment assignment, and thus should be #' included in our propensity model.
+The Data Set is 100\% fictional. It has three outcomes, with no missing observations anywhere. We  assume that a logical argument suggests that the square of `covA`, as well as the interactions of `covB` with `covC` and with `covD` should be related to treatment assignment, and thus should be  included in our propensity model.
 }
 \keyword{datasets}
 

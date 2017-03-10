@@ -20,7 +20,7 @@
 
 #' Toy dataset for EPBI500 at Case Western Reserve University
 #'
-#' The Data Set is 100\% fictional. It has three outcomes, with no missing observations anywhere. We #' assume that a logical argument suggests that the square of `covA`, as well as the interactions of #' `covB` with `covC` and with `covD` should be related to treatment assignment, and thus should be #' included in our propensity model.
+#' The Data Set is 100\% fictional. It has three outcomes, with no missing observations anywhere. We  assume that a logical argument suggests that the square of `covA`, as well as the interactions of `covB` with `covC` and with `covD` should be related to treatment assignment, and thus should be  included in our propensity model.
 #'
 #' @format A data frame with 200 rows and 6 variables. 70 treated - subjects 131-200 and 130 controls - subjects 1-130:
 #' \describe{
