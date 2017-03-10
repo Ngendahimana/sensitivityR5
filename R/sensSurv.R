@@ -13,7 +13,7 @@
 #' @references Section 4.4.8. of Rosenbaum PR (2002) Observational Studies, 2nd Edition.
 #' @examples
 #' covlist1=c("covA", "covB", "covC", "covD", "covE", "covF.Middle", "covF.High", "Asqr","BC", "BD")
-#' rubinRules(data=toy.matchedsample,Treatment="treated",covlist=covlist1)
+#' rubinRules(data=toy,Treatment="treated",covlist=covlist1)
 
 
 rubinRules = function(data,Treatment,matchscore="ps",covlist){
