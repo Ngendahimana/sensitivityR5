@@ -3,3 +3,4 @@
 export(rubinRules)
 export(ampPlot)
 export(binSensgraph)
+export(edaTable)

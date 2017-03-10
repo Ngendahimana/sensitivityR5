@@ -158,3 +158,23 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
   Obj
 }
 
+
+#' Creating table One
+#'
+#' @param x  Count of pairs where only control has outcome.
+#' @param y  Count of pairs where onlytreated has outcome.
+#' @return The sum of \code{x} and \code{y}.
+#' @examples
+#' edaTable (220, 380)
+
+
+edaTable = function(baselinevars,outcomeVar,data){
+  results = list()
+  formula= reformulate(termlabels=baselinevars, response =outcomeVar)
+  res1 <- compareGroups(formula, data = dataA, ref = 1)
+  table01=createTable(res1,show.p.mul = TRUE,show.p.overall = TRUE)
+  try(export2pdf(table01, file='table1.pdf'),silent = T)
+
+}
+
+
