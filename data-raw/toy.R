@@ -57,9 +57,9 @@ covnames <- c("covA", "covB", "covC", "covD", "covE", "covF - Middle", "covF - H
 
 ## Finally, we'll create a new data frame, containing only the matched sample
 matches <- factor(rep(match1$index.treated, 2))
-toy.matchedsample <- cbind(matches, toy[c(match1$index.control, match1$index.treated),])
+toy1 <- cbind(matches, toy[c(match1$index.control, match1$index.treated),])
 
-save(toy.matchedsample, file = 'data/toy.rdata', compress = 'xz')
+save(toy1, file = 'data/toy.rdata', compress = 'xz')
 
 
 
