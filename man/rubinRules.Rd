@@ -2,7 +2,7 @@
 % Please edit documentation in R/sensSurv.R
 \name{rubinRules}
 \alias{rubinRules}
-\title{Assessing rubin rules (1 - 3)}
+\title{Assessing the three rubin rules}
 \usage{
 rubinRules(data, Treatment, matchscore = "ps", covlist)
 }

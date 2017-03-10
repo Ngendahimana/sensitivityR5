@@ -1,4 +1,4 @@
-#' Assessing rubin rules (1 - 3)
+#' Assessing the three rubin rules
 #'
 #' This function allows you to assess how sensitive your results are to unmeasured variable.
 #' @param data A matched sample
