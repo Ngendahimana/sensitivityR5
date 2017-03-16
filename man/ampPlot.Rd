@@ -18,6 +18,6 @@ An amplification plot.
 Amplifying and visualizing gamma parameter
 }
 \examples{
-ampPlot(10, c(12,13,20))
+ampPlot(10, c(12,13,30))
 }
 

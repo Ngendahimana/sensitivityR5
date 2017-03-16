@@ -146,7 +146,7 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
   hrz1 = round(bounds[bounds$min == min(bounds$min), ]$pupper,2)
 
 
- k= ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt1+0.1,y=hrz1,label=paste0("(",vrt1,",",hrz1,")"))+labs(title = "Binary Outcome Sensitivity Plot")
+ k =ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt1+0.1,y=hrz1,label=paste0("(",vrt1,",",hrz1,")"))+labs(title = "Binary Outcome Sensitivity Plot")
 
   #plot(bounds$pupper ~ bounds$gamma, type = "l", xlab = "Gamma", ylab = "p-val upper bound", main = "Sensitivity plot for binary outcomes")
  # text(vrt,hrz,paste0("(",vrt,",",hrz,")"),pos = 2)
@@ -162,6 +162,140 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
   Obj
 
 }
+
+
+#' Visualizing sensivity results
+#'
+#' @param data  Dataset before matching.
+#' @param match_f  matching function that was used. Accepts match, matchit or bimatch only.
+#' @param object_name  name of the \code{match},\code{matchit} and \code{bimatch} object.
+#' @param exposure name of the exposure variable. This name must be in quotation marks.
+#' @param outcome name of the outcome variable. This name must be in quotation marks.
+#' @param Gamma Sensitivity parameter.
+#' @param GammaInc Increamental value to be used in generating Sensitivity table
+#' @param alpha Significant value. Default is 0.05
+#' @examples
+#' data(rhc)
+#' rhc1 = rhc[,c("swang1","age", "female", "edu", "income", "ninsclas", "race", "cat1", "dnr1", "wtkilo1","hrt1", "meanbp1", "resp1", "temp1", "card", "gastr", "hema", "meta", "neuro", "ortho","renal", "resp", "seps", "trauma" ,"amihx", "ca","cardiohx" ,"chfhx", "chrpulhx","dementhx" ,"gibledhx","immunhx", "liverhx", "malighx", "psychhx","renalhx", "transhx","aps1", "das2d3pc","scoma1", "surv2md1","alb1", "bili1", "crea1", "hema1", "paco21", "pafi1", "ph1","pot1", "sod1","urin1.NA", "urin1.i", "wblc1","surv_30")]
+#' # Creating \code{bmatch} object.
+#' out1 = bmatch(t_ind = t_ind1, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom1,fine = fine1,solver = solver)
+#' # Creating \code{Match} object.
+#' match1 <- Match(Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
+#' # Creating \code{Matchit} object.
+#' m.out1 <- matchit(swang1 ~ age + female + edu + income + ninsclas + race + cat1 + dnr1 + wtkilo1 + hrt1 + meanbp1 + resp1 + temp1 + card + gastr + hema + meta + neuro + ortho + renal + resp + seps + trauma +amihx + ca + cardiohx + chfhx + chrpulhx + dementhx + gibledhx + immunhx + liverhx + malighx + psychhx + renalhx + transhx + aps1 + das2d3pc + scoma1 + surv2md1 + alb1 + bili1 + crea1 + hema1 + paco21 +pafi1 + ph1 + pot1 + sod1 + urin1.NA + urin1.i + wblc1,data = rhc1)
+
+
+#' sensbin (data= rhc1,match_f ="matchit",object_name=m.out1,exposure = "swang1",outcome = "surv_30",Gamma = 1.5,GammaInc = 0.2)
+
+sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alpha = 0.05) {
+
+  if(match_f=='Match') {
+    extractor = (c(object_name$index.treated,object_name$index.control))
+    group_id = c(c(1:length(object_name$index.treated)),c(1:length(object_name$index.control)))
+    match = group_id
+    data1 = data[extractor,]
+    x1 = data1[,c(exposure,outcome)]
+    x2 = cbind(match,x1)
+    x = data.frame(x2[order(match),])
+    names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
+    #return(x)
+
+    #table(y.t, y.c)
+
+  } else if(match_f=="bmatch") {
+    extractor = c(object_name$t_id,object_name$c_id)
+    match = object_name$group_id
+    data1 = data[extractor,]
+    x1 = data1[,c(exposure,outcome)]
+    x2 = cbind(match,x1)
+    x = x2[order(match),]
+    names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
+    #return(x)
+  }else if(match_f=="matchit") {
+    data$rId = row.names(data)
+    data2 = data[,exposure]
+    data2$rId = row.names(data2)
+    names(data2)[1] = "exposure"
+    t_id = data2$rId[data2$exposure==1]
+    c_id = object_name$match.matrix
+    extractor = as.numeric(c(t_id ,c_id))
+    k2 = length(extractor)/2
+    match = rep(1:k2,2)
+    data1 = data[extractor,]
+    x1 = data1[,c(exposure,outcome)]
+    x2 = cbind(match,x1)
+    x = x2[order(match),]
+    names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
+    #return(x)
+
+  }else {
+    print ("Matching functions not known")
+  }
+
+  #return(x)
+
+  y.c <- x$Y[x$treat == 0]
+  y.t <- x$Y[x$treat == 1]
+  table(y.t, y.c)
+  y.tmp1 <- table(y.t, y.c)[2]
+  y.tmp2 <- table(y.t, y.c)[3]
+
+  (if (y.tmp1 >= y.tmp2) {
+    trt <- y.tmp1
+    ctrl <- y.tmp2
+  }
+    else {
+      trt <- y.tmp2
+      ctrl <- y.tmp1
+    })
+
+  gamma <- seq(1, Gamma, by = GammaInc)
+  mx <- ctrl + trt
+  up <- c() # creating an empty vector to store upper bound
+  lo <- c() # creating an empty vector to store lower bound
+  series <- seq(trt, mx, by = 1)
+  n.it <- length(gamma)
+  for (i in 1:n.it) {
+    p.plus <- gamma[i]/(1 + gamma[i])
+    p.minus <- 1/(1 + gamma[i])
+    up.tmp <- sum(dbinom(series, mx, prob = p.plus))
+    lo.tmp <- sum(dbinom(series, mx, prob = p.minus))
+    up <- c(up, up.tmp)
+    lo <- c(lo, lo.tmp)
+  }
+  pval <- lo[1]
+  bounds <- data.frame(gamma, plower = round(lo, 5), pupper = round(up, 5))
+
+  bounds$min = abs(alpha - bounds$pupper)
+
+  vrt =bounds[bounds$min == min(bounds$min), ]$gamma
+  hrz = bounds[bounds$min == min(bounds$min), ]$pupper
+  vrt1 = round(bounds[bounds$min == min(bounds$min), ]$gamma,2)
+  hrz1 = round(bounds[bounds$min == min(bounds$min), ]$pupper,2)
+
+
+  plot= ggplot(data = bounds, aes(x = gamma,y = pupper))+geom_line()+geom_point(aes(x=vrt,y=hrz))+ylab("p upper bound")+xlab("gamma (Bias)")+theme_bw()+annotate("text",x=vrt1+0.1,y=hrz1,label=paste0("(",vrt1,",",hrz1,")"))+labs(title = "Binary Outcome Sensitivity Plot")
+
+  #plot(bounds$pupper ~ bounds$gamma, type = "l", xlab = "Gamma", ylab = "p-val upper bound", main = "Sensitivity plot for binary outcomes")
+  # text(vrt,hrz,paste0("(",vrt,",",hrz,")"),pos = 2)
+  # points(vrt,hrz,pch=15)
+
+
+  colnames(bounds) <- c("Gamma", "Lower bound", "Upper bound")
+  msg <- "Rosenbaum Sensitivity Test \n"
+  note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
+  Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
+              msg = msg, bounds = bounds[,c(1:3)], note = note,plot=plot)
+  #class(Obj) <- c("rbounds", class(Obj))
+  return(Obj)
+
+
+}
+
+
+
+
+
 
 
 #' Creating table One

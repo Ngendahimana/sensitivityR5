@@ -18,6 +18,6 @@ The sum of \code{x} and \code{y}.
 Visualizing sensivity results
 }
 \examples{
-binSensgraph (220, 380)
+binSensgraph (220, 450)
 }
 
