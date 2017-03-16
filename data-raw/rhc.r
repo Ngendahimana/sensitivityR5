@@ -77,6 +77,10 @@ rhc$surv_60_f = factor(rhc$surv_60,levels = c(1,0),labels = c("Died","Survived")
 rhc$surv_180 = as.numeric(rhc$survdays<180,1)
 rhc$surv_180_f = factor(rhc$surv_180,levels = c(1,0),labels = c("Died","Survived"))
 
+rhc$urin1.i <- impute(rhc$urin1, 0)
+rhc$urin1.i <- as.numeric(rhc$urin1.i)
+
+
 
 rhc <- rhc %>%
   mutate(dnr1_f = dnr1, card_f = card, gastr_f = gastr,
