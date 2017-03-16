@@ -175,7 +175,7 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 #' @param GammaInc Increamental value to be used in generating Sensitivity table
 #' @param alpha Significant value. Default is 0.05
 #' @examples
-#' library(MatchIt);library(Matching)
+#' library(MatchIt);library(Matching);library(ggplot2)
 #' data(rhc)
 #' rhc1 = rhc[,c("swang1","age", "female", "edu", "income", "ninsclas", "race", "cat1", "dnr1", "wtkilo1","hrt1", "meanbp1", "resp1", "temp1", "card", "gastr", "hema", "meta", "neuro", "ortho","renal", "resp", "seps", "trauma" ,"amihx", "ca","cardiohx" ,"chfhx", "chrpulhx","dementhx" ,"gibledhx","immunhx", "liverhx", "malighx", "psychhx","renalhx", "transhx","aps1", "das2d3pc","scoma1", "surv2md1","alb1", "bili1", "crea1", "hema1", "paco21", "pafi1", "ph1","pot1", "sod1","urin1.NA", "urin1.i", "wblc1","surv_30")]
 #'
@@ -217,24 +217,7 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     x2 = cbind(match,x1)
     x = data.frame(x2[order(match),])
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
-    #return(x)
 
-    y.c <- x$Y[x$treat == 0]
-    y.t <- x$Y[x$treat == 1]
-    table(y.t, y.c)
-    y.tmp1 <- table(y.t, y.c)[2]
-    y.tmp2 <- table(y.t, y.c)[3]
-
-    (if (y.tmp1 >= y.tmp2) {
-      trt <- y.tmp1
-      ctrl <- y.tmp2
-    }
-      else {
-        trt <- y.tmp2
-        ctrl <- y.tmp1
-      })
-
-    #table(y.t, y.c)
 
   } else if(match_f=="bmatch") {
     extractor = c(object_name$t_id,object_name$c_id)
@@ -245,21 +228,6 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     x = x2[order(match),]
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
     #return(x)
-
-    y.c <- x$Y[x$treat == 0]
-    y.t <- x$Y[x$treat == 1]
-    table(y.t, y.c)
-    y.tmp1 <- table(y.t, y.c)[2]
-    y.tmp2 <- table(y.t, y.c)[3]
-
-    (if (y.tmp1 >= y.tmp2) {
-      trt <- y.tmp1
-      ctrl <- y.tmp2
-    }
-      else {
-        trt <- y.tmp2
-        ctrl <- y.tmp1
-      })
 
   }else if(match_f=="matchit") {
     data$rId = row.names(data)
@@ -276,22 +244,6 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     x2 = cbind(match,x1)
     x = x2[order(match),]
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
-    #return(x)
-
-    y.c <- x$Y[x$treat == 0]
-    y.t <- x$Y[x$treat == 1]
-    table(y.t, y.c)
-    y.tmp1 <- table(y.t, y.c)[2]
-    y.tmp2 <- table(y.t, y.c)[3]
-
-    (if (y.tmp1 >= y.tmp2) {
-      trt <- y.tmp1
-      ctrl <- y.tmp2
-    }
-      else {
-        trt <- y.tmp2
-        ctrl <- y.tmp1
-      })
 
   }else {
     print ("Matching functions not known")
@@ -299,6 +251,20 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
 
   #return(x)
 
+  y.c <- x$Y[x$treat == 0]
+  y.t <- x$Y[x$treat == 1]
+  table(y.t, y.c)
+  y.tmp1 <- table(y.t, y.c)[2]
+  y.tmp2 <- table(y.t, y.c)[3]
+
+  (if (y.tmp1 >= y.tmp2) {
+    trt <- y.tmp1
+    ctrl <- y.tmp2
+  }
+    else {
+      trt <- y.tmp2
+      ctrl <- y.tmp1
+    })
 
   gamma <- seq(1, Gamma, by = GammaInc)
   mx <- ctrl + trt
