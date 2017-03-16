@@ -255,7 +255,7 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
 
   y.c <- x$Y[x$treat == 0]
   y.t <- x$Y[x$treat == 1]
-  table(y.t, y.c)
+  #table(y.t, y.c)
   y.tmp1 <- table(y.t, y.c)[2]
   y.tmp2 <- table(y.t, y.c)[3]
 
