@@ -67,6 +67,17 @@ rhc$survdays <- ifelse(rhc$death == 1, rhc$dthdte - rhc$sadmdte, rhc$lstctdte - 
 rhc$urin1.NA <- as.numeric(is.na(rhc$urin1))
 rhc$urin1.NA_f <- factor(rhc$urin1.NA == 1, levels = c(F, T), labels = c("No", "Yes"))
 
+# defining outcomes
+rhc$surv_30 = as.numeric(rhc$survdays<30,1)
+rhc$surv_30_f = factor(rhc$surv_30,levels = c(1,0),labels = c("Died","Survived"))
+
+rhc$surv_60 = as.numeric(rhc$survdays<60,1)
+rhc$surv_60_f = factor(rhc$surv_60,levels = c(1,0),labels = c("Died","Survived"))
+
+rhc$surv_180 = as.numeric(rhc$survdays<180,1)
+rhc$surv_180_f = factor(rhc$surv_180,levels = c(1,0),labels = c("Died","Survived"))
+
+
 rhc <- rhc %>%
   mutate(dnr1_f = dnr1, card_f = card, gastr_f = gastr,
          hema_f = hema, meta_f = meta, neuro_f = neuro,
@@ -103,3 +114,4 @@ rhc <- rhc %>%
   )
 
 save(rhc, file = 'data/rhc.rdata', compress = 'xz')
+
