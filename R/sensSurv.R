@@ -187,15 +187,16 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 #'
 #' # Creating Match object
 #'
-#' X <- rhc$linps
-#' Tr <- as.logical(rhc$swang1)
+#' X <- rhc1$linps
+#' Tr <- as.logical(rhc1$swang1)
 #' match1 <- Match(Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
 #'
 #' # Creating Matchit object.
 #'
 #' m.out1 <- matchit(swang1 ~ age + female + edu + income + ninsclas + race + cat1 + dnr1 + wtkilo1 + hrt1 + meanbp1 + resp1 + temp1 + card + gastr + hema + meta + neuro + ortho + renal + resp + seps + trauma +amihx + ca + cardiohx + chfhx + chrpulhx + dementhx + gibledhx + immunhx + liverhx + malighx + psychhx + renalhx + transhx + aps1 + das2d3pc + scoma1 + surv2md1 + alb1 + bili1 + crea1 + hema1 + paco21 +pafi1 + ph1 + pot1 + sod1 + urin1.NA + urin1.i + wblc1,data = rhc1)
-
-
+#'
+#' # sensitivity analyisis
+#'
 #' sensbin (data= rhc1,match_f ="matchit",object_name=m.out1,exposure = "swang1",outcome = "surv_30",Gamma = 1.5,GammaInc = 0.01)
 
 sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alpha = 0.05) {
