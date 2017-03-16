@@ -219,6 +219,21 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
     #return(x)
 
+    y.c <- x$Y[x$treat == 0]
+    y.t <- x$Y[x$treat == 1]
+    table(y.t, y.c)
+    y.tmp1 <- table(y.t, y.c)[2]
+    y.tmp2 <- table(y.t, y.c)[3]
+
+    (if (y.tmp1 >= y.tmp2) {
+      trt <- y.tmp1
+      ctrl <- y.tmp2
+    }
+      else {
+        trt <- y.tmp2
+        ctrl <- y.tmp1
+      })
+
     #table(y.t, y.c)
 
   } else if(match_f=="bmatch") {
@@ -230,6 +245,22 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     x = x2[order(match),]
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
     #return(x)
+
+    y.c <- x$Y[x$treat == 0]
+    y.t <- x$Y[x$treat == 1]
+    table(y.t, y.c)
+    y.tmp1 <- table(y.t, y.c)[2]
+    y.tmp2 <- table(y.t, y.c)[3]
+
+    (if (y.tmp1 >= y.tmp2) {
+      trt <- y.tmp1
+      ctrl <- y.tmp2
+    }
+      else {
+        trt <- y.tmp2
+        ctrl <- y.tmp1
+      })
+
   }else if(match_f=="matchit") {
     data$rId = row.names(data)
     data2 = data[,exposure]
@@ -247,26 +278,27 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
     names(x) = c("id","treat","Y") # dataframe with treat,outcome and pairID variables
     #return(x)
 
+    y.c <- x$Y[x$treat == 0]
+    y.t <- x$Y[x$treat == 1]
+    table(y.t, y.c)
+    y.tmp1 <- table(y.t, y.c)[2]
+    y.tmp2 <- table(y.t, y.c)[3]
+
+    (if (y.tmp1 >= y.tmp2) {
+      trt <- y.tmp1
+      ctrl <- y.tmp2
+    }
+      else {
+        trt <- y.tmp2
+        ctrl <- y.tmp1
+      })
+
   }else {
     print ("Matching functions not known")
   }
 
   #return(x)
 
-  y.c <- x$Y[x$treat == 0]
-  y.t <- x$Y[x$treat == 1]
-  #table(y.t, y.c)
-  y.tmp1 <- table(y.t, y.c)[2]
-  y.tmp2 <- table(y.t, y.c)[3]
-
-  (if (y.tmp1 >= y.tmp2) {
-    trt <- y.tmp1
-    ctrl <- y.tmp2
-  }
-    else {
-      trt <- y.tmp2
-      ctrl <- y.tmp1
-    })
 
   gamma <- seq(1, Gamma, by = GammaInc)
   mx <- ctrl + trt
