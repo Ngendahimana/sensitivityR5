@@ -28,7 +28,7 @@ sensbin(data, match_f, object_name, exposure, outcome, Gamma, GammaInc,
 Visualizing sensivity results
 }
 \examples{
-library(MatchIt);library(Matching)
+library(MatchIt);library(Matching);library(ggplot2)
 data(rhc)
 rhc1 = rhc[,c("swang1","age", "female", "edu", "income", "ninsclas", "race", "cat1", "dnr1", "wtkilo1","hrt1", "meanbp1", "resp1", "temp1", "card", "gastr", "hema", "meta", "neuro", "ortho","renal", "resp", "seps", "trauma" ,"amihx", "ca","cardiohx" ,"chfhx", "chrpulhx","dementhx" ,"gibledhx","immunhx", "liverhx", "malighx", "psychhx","renalhx", "transhx","aps1", "das2d3pc","scoma1", "surv2md1","alb1", "bili1", "crea1", "hema1", "paco21", "pafi1", "ph1","pot1", "sod1","urin1.NA", "urin1.i", "wblc1","surv_30")]
 
