@@ -177,8 +177,22 @@ binSensgraph = function (x, y = NULL, Gamma = 3, GammaInc = .2,alpha = 0.06)
 #' @examples
 #' data(rhc)
 #' rhc1 = rhc[,c("swang1","age", "female", "edu", "income", "ninsclas", "race", "cat1", "dnr1", "wtkilo1","hrt1", "meanbp1", "resp1", "temp1", "card", "gastr", "hema", "meta", "neuro", "ortho","renal", "resp", "seps", "trauma" ,"amihx", "ca","cardiohx" ,"chfhx", "chrpulhx","dementhx" ,"gibledhx","immunhx", "liverhx", "malighx", "psychhx","renalhx", "transhx","aps1", "das2d3pc","scoma1", "surv2md1","alb1", "bili1", "crea1", "hema1", "paco21", "pafi1", "ph1","pot1", "sod1","urin1.NA", "urin1.i", "wblc1","surv_30")]
-
+#'
+#' # fitting score model
+#'
+#' psmodel <- glm(swang1 ~ age + female + edu + income + ninsclas + race + cat1 + dnr1 + wtkilo1 + hrt1 + meanbp1 + resp1 + temp1 + card + gastr + hema + meta + neuro + ortho + renal + resp + seps + trauma +amihx + ca + cardiohx + chfhx + chrpulhx + dementhx + gibledhx + immunhx + liverhx + malighx + psychhx + renalhx + transhx + aps1 + das2d3pc + scoma1 + surv2md1 + alb1 + bili1 + crea1 + hema1 + paco21 +pafi1 + ph1 + pot1 + sod1 + urin1.NA + urin1.i + wblc1, family=binomial(), data=rhc1)
+#rocplot(mod1)
+#' rhc1$ps <- psmodel$fitted
+#' rhc1$linps <- psmodel$linear.predictors
+#'
+#' # Creating Match object
+#'
+#' X <- rhc$linps
+#' Tr <- as.logical(rhc$swang1)
+#' match1 <- Match(Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
+#'
 #' # Creating Matchit object.
+#'
 #' m.out1 <- matchit(swang1 ~ age + female + edu + income + ninsclas + race + cat1 + dnr1 + wtkilo1 + hrt1 + meanbp1 + resp1 + temp1 + card + gastr + hema + meta + neuro + ortho + renal + resp + seps + trauma +amihx + ca + cardiohx + chfhx + chrpulhx + dementhx + gibledhx + immunhx + liverhx + malighx + psychhx + renalhx + transhx + aps1 + das2d3pc + scoma1 + surv2md1 + alb1 + bili1 + crea1 + hema1 + paco21 +pafi1 + ph1 + pot1 + sod1 + urin1.NA + urin1.i + wblc1,data = rhc1)
 
 
@@ -279,7 +293,7 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
 
 
   colnames(bounds) <- c("Gamma", "Lower bound", "Upper bound")
-  msg <- "Rosenbaum Sensitivity Test \n"
+  msg <- "Rosenbaum Sensitivity Test"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
   Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
               msg = msg, bounds = bounds[,c(1:3)], note = note,plot=plot)
@@ -288,11 +302,6 @@ sensbin <- function(data,match_f,object_name,exposure,outcome,Gamma,GammaInc,alp
 
 
 }
-
-
-
-
-
 
 
 #' Creating table One
