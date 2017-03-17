@@ -25,6 +25,7 @@ rubinRules(data, Treatment, matchscore = "ps", covlist)
 This function allows you to assess how sensitive your results are to unmeasured variable.
 }
 \examples{
+data(toy)
 covlist1=c("covA", "covB", "covC", "covD", "covE", "covF.Middle", "covF.High", "Asqr","BC", "BD")
 rubinRules(data=toy,Treatment="treated",covlist=covlist1)
 }
