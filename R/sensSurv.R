@@ -13,7 +13,13 @@
 #' @references Section 4.4.8. of Rosenbaum PR (2002) Observational Studies, 2nd Edition.
 #' @examples
 #' data(toy)
+#' psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
+#'
+#' toy$ps <- psmodel$fitted
+#' toy$linps <- psmodel$linear.predictors
+#'
 #' covlist1=c("covA", "covB", "covC", "covD", "covE", "covF.Middle", "covF.High", "Asqr","BC", "BD")
+#'
 #' rubinRules(data=toy,Treatment="treated",covlist=covlist1)
 
 

@@ -26,7 +26,13 @@ This function allows you to assess how sensitive your results are to unmeasured 
 }
 \examples{
 data(toy)
+psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
+
+toy$ps <- psmodel$fitted
+toy$linps <- psmodel$linear.predictors
+
 covlist1=c("covA", "covB", "covC", "covD", "covE", "covF.Middle", "covF.High", "Asqr","BC", "BD")
+
 rubinRules(data=toy,Treatment="treated",covlist=covlist1)
 }
 \references{
