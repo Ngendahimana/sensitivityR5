@@ -331,13 +331,14 @@ sensbin <- function(data, match_f, object_name, exposure, outcome, Gamma, GammaI
 #'
 #' This function performs sensitivity analysis for time to event outcomes in observational studies
 #'
+#' @param object_name name of the matching object. Should be either a \code{Match} or \code{matchit} object.
 #' @param data dataset.
 #' @param exp name of treatment variable.
 #' @param outcome name of outcome variable.
 #' @param failtime name of event time variable.
 #' @param Gamma upper bound for sensitivity parameter.
 #' @param Gammainterval value by which to increament sensitivity parameter from zero to \code{Gamma}
-#' @param object_name name of the matching object. Should be either a \code{Match} or \code{matchit} object.
+
 #' @param plot_title main title of your plot.
 
 #' @examples
@@ -352,7 +353,7 @@ sensbin <- function(data, match_f, object_name, exposure, outcome, Gamma, GammaI
 
 #' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-#' sensSurv(data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,object_name = match.it,plot_title = 'Time To Event Outcome Sensitivity Plot')
+#' sensSurv(object_name = match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
 #'
 
 #' @references Rosenbum 2011
