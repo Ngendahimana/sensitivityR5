@@ -2,7 +2,7 @@
 % Please edit documentation in R/sensSurv.R
 \name{Survsens}
 \alias{Survsens}
-\title{This function performs sensitivity analysis for time to event outcomes in observational studies}
+\title{Sensitivity Test for Matched Time to Event Outcomes}
 \usage{
 Survsens(data = toy, object_name = match1, exp, outcome, failtime, Gamma,
   alpha, Gammainterval, plot_title = NULL)
@@ -36,8 +36,8 @@ X <- toy$linps ## matching on the linear propensity score
 Tr <- as.logical(toy$treated)
 Y <- toy$out3.time
 match1 <- Match(Y=Y, Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
-match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method="nearest", ratio=1)
-sensSurv(data =toy,exp="treated",outcome = "out2",failtime = "out3.time",Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,object_name = match.it,plot_title = "Time To Event Outcome Sensitivity Plot")
+match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
+sensSurv(data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,object_name = match.it,plot_title = 'Time To Event Outcome Sensitivity Plot')
 
 }
 \references{
