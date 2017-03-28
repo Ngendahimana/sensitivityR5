@@ -466,7 +466,8 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 #' @export
 #' @examples
 #' ## Creating \code{Match} object
-#'
+#' data(toy)
+#' psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
 #' X <- toy$linps
 #' Tr <- as.logical(toy$treated)
 #' Y = toy$out1.cost
@@ -508,7 +509,7 @@ contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma =
     # data2$rId = row.names(data2)
     #names(data2)[2] = "exp"
     t_id = rownames(x$match.matrix)
-    c_id = object_name$match.matrix
+    c_id = x$match.matrix
     extractor = as.numeric(c(t_id, c_id))
     data1 = x$model$data[extractor,c(exp,outcome)]
     names(data1) = c("exp","outcome")

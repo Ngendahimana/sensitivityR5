@@ -25,7 +25,8 @@ This function performs sensitivity analysis for continious outcomes in observati
 }
 \examples{
 ## Creating \\code{Match} object
-
+data(toy)
+psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
 X <- toy$linps
 Tr <- as.logical(toy$treated)
 Y = toy$out1.cost
