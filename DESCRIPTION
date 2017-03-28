@@ -1,10 +1,10 @@
 Package: SensitivityR5
 Type: Package
-Title: This package supports implementation of sensitivity analyisis using objects from Match, MatchIt and bmatch.
+Title: This package supports implementation of sensitivity analyisis using objects from Match, MatchIt and bmatch
 Version: 0.1
 Date: 2017-10-02
 Authors@R: person("David", "Ngendahimana", email = "dkn18@case.edu", role = c("aut", "cre"))
-Description: This package supports implementation of sensitivity analyisis using objects from Match, MatchIt and bmatch.
+Description: This package supports implementation of sensitivity analyisis using objects from Match, MatchIt and bmatch
 Imports:
     dplyr,
     ggplot2,
