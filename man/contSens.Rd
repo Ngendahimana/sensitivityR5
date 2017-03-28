@@ -2,6 +2,7 @@
 % Please edit documentation in R/sensSurv.R
 \name{contSens}
 \alias{contSens}
+\title{Sensitivity Test for Continous outcomes}
 \usage{
 contSens(x, y = NULL, exp = NULL, outcome = NULL, CausalEst = NULL,
   Gamma = NULL, GammaInc = NULL, alpha = NULL, plot_title = NULL)
@@ -18,6 +19,9 @@ contSens(x, y = NULL, exp = NULL, outcome = NULL, CausalEst = NULL,
 \item{alpha}{significance level.}
 
 \item{plot_title}{plot title.}
+}
+\description{
+This function performs sensitivity analysis for continious outcomes in observational studies
 }
 \examples{
 ## Creating \\code{Match} object

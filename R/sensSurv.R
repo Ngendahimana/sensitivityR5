@@ -9,8 +9,8 @@
 #' @param Gammainterval interval between two hidden bias to be assessed
 #' @param alpha Significance level
 #' @keywords Sensitivity
-#' @export
 #' @references Section 4.4.8. of Rosenbaum PR (2002) Observational Studies, 2nd Edition.
+#' @export
 #' @examples
 #' data(toy)
 #' psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
@@ -85,6 +85,7 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
 #'
 #' @param gamma  gamma parameter to be amplfied.
 #' @param lambda  vector of 3 possible n-fold increase in odds of treatment to be amplified.
+#' @export
 #' @return An amplification plot.
 #' @examples
 #' ampPlot(10, c(12,13,30))
@@ -110,6 +111,7 @@ ampPlot <- function(gamma, lambda) {
 #'
 #' @param x  Count of pairs where only control has outcome.
 #' @param y  Count of pairs where onlytreated has outcome.
+#' @export
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
 #' binSensgraph (220, 450)
@@ -191,6 +193,7 @@ binSensgraph = function(x, y = NULL, Gamma = 3, GammaInc = 0.2, alpha = 0.06) {
 #' @param Gamma Sensitivity parameter.
 #' @param GammaInc Increamental value to be used in generating Sensitivity table
 #' @param alpha Significant value. Default is 0.05
+#' @export
 #' @examples
 #' library(MatchIt);library(Matching);library(ggplot2)
 #' data(rhc)
@@ -338,9 +341,8 @@ sensbin <- function(data, match_f, object_name, exposure, outcome, Gamma, GammaI
 #' @param failtime name of event time variable.
 #' @param Gamma upper bound for sensitivity parameter.
 #' @param Gammainterval value by which to increament sensitivity parameter from zero to \code{Gamma}
-
 #' @param plot_title main title of your plot.
-
+#' @export
 #' @examples
 #' data(toy)
 #' psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
@@ -451,12 +453,18 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 
 }
 
+
+#' Sensitivity Test for Continous outcomes
+#'
+#' This function performs sensitivity analysis for continious outcomes in observational studies
+#'
 #' @param x Treatment group outcomes in same order as treatment group outcomes or an objects from a Match,matchit or bmatch package.
 #' @param y Control group outcomes in same order as treatment group outcomes unnecessary when using a Match,matchit or bmatch packages object.
 #' @param Gamma Upper-bound on gamma parameter.
 #' @param GammaInc To set user-specified increments for gamma parameter.
 #' @param alpha significance level.
 #' @param plot_title plot title.
+#' @export
 #' @examples
 #' ## Creating \code{Match} object
 #'
@@ -581,6 +589,7 @@ contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma =
 #'
 #' @param x  Count of pairs where only control has outcome.
 #' @param y  Count of pairs where onlytreated has outcome.
+#' @export
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
 #' edaTable (220, 380)
