@@ -451,6 +451,128 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 
 }
 
+#' @param x Treatment group outcomes in same order as treatment group outcomes or an objects from a Match,matchit or bmatch package.
+#' @param y Control group outcomes in same order as treatment group outcomes unnecessary when using a Match,matchit or bmatch packages object.
+#' @param Gamma Upper-bound on gamma parameter.
+#' @param GammaInc To set user-specified increments for gamma parameter.
+#' @param alpha significance level.
+#' @param plot_title plot title.
+#' @examples
+#' ## Creating \code{Match} object
+#'
+#' X <- toy$linps
+#' Tr <- as.logical(toy$treated)
+#' Y = toy$out1.cost
+#' match1 <- Match(Y=Y,Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
+#'
+#' ## Creating \code{matchit} object
+#'
+#' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
+#'
+#'contSens(x = match1,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
+#'
+#'
+#' @author David Ngendahimana, Case Western Reserve University.
+#' @references Rosenbaum, Paul R. (2002) Observational Studies. Springer-Verlag.
+
+
+contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma = NULL, GammaInc = NULL ,alpha = NULL,plot_title =NULL)
+{
+  if ((class(x) != "Match") & (class(x) != "matchit")) {
+    trt <- x
+    ctrl <- y }
+
+  else if (class(x) == "Match"){
+    if (x$est > 0) {
+      ctrl <- x$mdata$Y[x$mdata$Tr == 0]
+      trt <- x$mdata$Y[x$mdata$Tr == 1]
+    }
+    else {
+      ctrl <- x$mdata$Y[x$mdata$Tr == 1]
+      trt <- x$mdata$Y[x$mdata$Tr == 0]
+    }
+
+  }
+
+  else if(class(x) == "matchit") {
+
+    #data$rId = row.names(data)
+    #data2 = data[, c("rId", exp)]
+    # data2$rId = row.names(data2)
+    #names(data2)[2] = "exp"
+    t_id = rownames(x$match.matrix)
+    c_id = object_name$match.matrix
+    extractor = as.numeric(c(t_id, c_id))
+    data1 = x$model$data[extractor,c(exp,outcome)]
+    names(data1) = c("exp","outcome")
+
+    if (CausalEst > 0) {
+      ctrl <- data1$outcome[data1$exp == 0]
+      trt <- data1$outcome[data1$exp == 1]
+    }
+    else {
+      ctrl <- data1$outcome[data1$exp == 1]
+      trt <- data1$outcome[data1$exp == 0]
+    }
+  } else {
+
+    print ("error")
+  }
+
+  gamma <- seq(1, Gamma, by = GammaInc)
+  m <- length(gamma)
+  pvals <- matrix(NA, m, 2)
+  diff <- trt - ctrl
+  S <- length(diff)
+  diff <- diff[diff != 0]
+  ranks <- rank(abs(diff), ties.method = "average")
+  psi <- as.numeric(diff > 0)
+  T <- sum(psi * ranks)
+  for (i in 1:m) {
+    p.plus <- gamma[i]/(1 + gamma[i])
+    p.minus <- 1/(1 + gamma[i])
+    E.T.plus <- sum(ranks * p.plus)
+    V.T <- sum(ranks^2 * p.plus * (1 - p.plus))
+    E.T.minus <- sum(ranks * p.minus)
+    z.plus <- (T - E.T.plus)/sqrt(V.T)
+    z.minus <- (T - E.T.minus)/sqrt(V.T)
+    p.val.up <- 1 - pnorm(z.plus)
+    p.val.low <- 1 - pnorm(z.minus)
+    pvals[i, 1] <- round(p.val.low, digits = 4)
+    pvals[i, 2] <- round(p.val.up, digits = 4)
+  }
+  pval <- pvals[1, 1]
+  bounds <- data.frame(gamma, pvals)
+  names(bounds) <- c("Gamma", "Lower bound", "Upper bound")
+
+
+  bounds$min = abs(alpha - bounds$`Upper bound`)
+  vrt = bounds[bounds$min == min(bounds$min), ]$Gamma
+  hrz = bounds[bounds$min == min(bounds$min), ]$`Upper bound`
+  vrt1 = round(bounds[bounds$min == min(bounds$min), ]$Gamma, 2)
+  hrz1 = round(bounds[bounds$min == min(bounds$min), ]$`Upper bound`, 2)
+
+
+  plot = ggplot(data = bounds, aes(x = Gamma, y = `Upper bound`)) + geom_line() + geom_point(aes(x = vrt,y = hrz)) + ylab("p upper bound") + xlab("gamma (Bias)") + theme_bw() + annotate("text",x = vrt + 0.1 * vrt, y = hrz, label = paste0("(", vrt1, ",", hrz1, ")")) + labs(title = plot_title,caption = paste("matching done by", class(x), "function")) + theme(plot.title = element_text(hjust = 0.5))
+
+
+  upperbound_pval = hrz = bounds[bounds$min == min(bounds$min), ]$`Upper bound`
+  Gamma = bounds[bounds$min == min(bounds$min), ]$Gamma
+
+  msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
+  note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
+  Obj <- list(Gamma = Gamma,pval =upperbound_pval,alpha = alpha,
+              msg = msg,note = note,plot = plot)
+  #class(Obj) <- c("rbounds", class(Obj))
+  return(Obj)
+}
+
+
+
+
+
+
+
 
 
 
