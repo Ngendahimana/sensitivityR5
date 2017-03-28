@@ -9,6 +9,6 @@ Imports:
     dplyr,
     ggplot2,
     compareGroups
-License: GPU
+License: what license?
 LazyData: TRUE
 RoxygenNote: 5.0.1
