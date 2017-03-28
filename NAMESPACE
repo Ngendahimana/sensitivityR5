@@ -2,7 +2,6 @@
 
 export(Survsens)
 export(ampPlot)
-export(binSensgraph)
 export(contSens)
 export(edaTable)
 export(rubinRules)

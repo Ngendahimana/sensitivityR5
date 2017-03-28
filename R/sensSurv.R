@@ -111,7 +111,6 @@ ampPlot <- function(gamma, lambda) {
 #'
 #' @param x  Count of pairs where only control has outcome.
 #' @param y  Count of pairs where onlytreated has outcome.
-#' @export
 #' @return The sum of \code{x} and \code{y}.
 #' @examples
 #' binSensgraph (220, 450)
