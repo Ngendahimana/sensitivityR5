@@ -467,7 +467,7 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 #' @param plot_title plot title.
 #' @export
 #' @examples
-#' ## Creating \code{Match} object
+#' library(ggplot2);library(Matching);library(MatchIt)
 #' data(toy)
 #'
 #' ## Creating Matching object
@@ -481,10 +481,9 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 #' contSens(x=match1, Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 #'
 #' ## Creating MatchIt object
-#'
 #' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 #'
-#'contSens(x=match.it ,exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+#'contSens(x=match.it ,exp = "treated",outcome = "out1.cost", CausalEst = 15.5,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 #'
 
 #'

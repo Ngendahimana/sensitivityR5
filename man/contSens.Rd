@@ -28,7 +28,7 @@ contSens(x, y = NULL, exp = NULL, outcome = NULL, CausalEst = NULL,
 This function performs sensitivity analysis for continious outcomes in observational studies
 }
 \examples{
-## Creating \\code{Match} object
+library(ggplot2);library(Matching);library(MatchIt)
 data(toy)
 
 ## Creating Matching object
@@ -42,10 +42,9 @@ match1 <- Match(Y=Y,Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
 contSens(x=match1, Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 
 ## Creating MatchIt object
-
 match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-contSens(x=match.it ,exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+contSens(x=match.it ,exp = "treated",outcome = "out1.cost", CausalEst = 15.5,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 
 
 }
