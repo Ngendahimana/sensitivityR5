@@ -459,6 +459,8 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 #'
 #' @param x Treatment group outcomes in same order as treatment group outcomes or an objects from a Match,matchit or bmatch package.
 #' @param y Control group outcomes in same order as treatment group outcomes unnecessary when using a Match,matchit or bmatch packages object.
+#' @param exp treatment variable. Must be specified for MatchIt objects not required for match objects.
+#' @param outcome treatment variable. Must be specified for MatchIt objects not required for match objects.
 #' @param Gamma Upper-bound on gamma parameter.
 #' @param GammaInc To set user-specified increments for gamma parameter.
 #' @param alpha significance level.
@@ -477,7 +479,9 @@ Survsens = function(data = toy, object_name = match1, exp, outcome, failtime, Ga
 #'
 #' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 #'
-#'contSens(x = match1,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
+#'contSens(x=match.it ,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+#'
+#' contSens(x=match1, exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 #'
 #'
 #' @author David Ngendahimana, Case Western Reserve University.

@@ -12,6 +12,10 @@ contSens(x, y = NULL, exp = NULL, outcome = NULL, CausalEst = NULL,
 
 \item{y}{Control group outcomes in same order as treatment group outcomes unnecessary when using a Match,matchit or bmatch packages object.}
 
+\item{exp}{treatment variable. Must be specified for MatchIt objects not required for match objects.}
+
+\item{outcome}{treatment variable. Must be specified for MatchIt objects not required for match objects.}
+
 \item{Gamma}{Upper-bound on gamma parameter.}
 
 \item{GammaInc}{To set user-specified increments for gamma parameter.}
@@ -36,7 +40,9 @@ match1 <- Match(Y=Y,Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
 
 match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-contSens(x = match1,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
+contSens(x=match.it ,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+
+contSens(x=match1, exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 
 
 }
