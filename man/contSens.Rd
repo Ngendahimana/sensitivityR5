@@ -30,19 +30,22 @@ This function performs sensitivity analysis for continious outcomes in observati
 \examples{
 ## Creating \\code{Match} object
 data(toy)
+
+## Creating Matching object
 psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
+toy$linps = psmodel$fitted.values
 X <- toy$linps
 Tr <- as.logical(toy$treated)
 Y = toy$out1.cost
 match1 <- Match(Y=Y,Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
 
-## Creating \\code{matchit} object
+contSens(x=match1, Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+
+## Creating MatchIt object
 
 match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-contSens(x=match.it ,Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
-
-contSens(x=match1, exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
+contSens(x=match.it ,exp = "treated",outcome = "out1.cost",Gamma=5,GammaInc = 0.1,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot') #using mathit object
 
 
 }
