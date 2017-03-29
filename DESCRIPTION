@@ -9,6 +9,10 @@ Imports:
     dplyr,
     ggplot2,
     compareGroups
+Suggests:
+    MatchIt,
+    Matching,
+    designmatch
 License: what license?
 LazyData: TRUE
 RoxygenNote: 5.0.1
