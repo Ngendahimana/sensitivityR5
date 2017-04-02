@@ -560,19 +560,19 @@ contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma =
   bounds <- data.frame(gamma, pvals)
   names(bounds) <- c("Gamma", "Lower bound", "Upper bound")
 
-
+  bounds1 = bounds
   bounds$min = abs(alpha - bounds$`Upper bound`)
-  vrt = bounds[bounds$min == min(bounds$min), ]$Gamma
-  hrz = bounds[bounds$min == min(bounds$min), ]$`Upper bound`
-  vrt1 = round(bounds[bounds$min == min(bounds$min), ]$Gamma, 2)
-  hrz1 = round(bounds[bounds$min == min(bounds$min), ]$`Upper bound`, 2)
+  vrt = bounds1[bounds1$min == min(bounds1$min), ]$Gamma
+  hrz = bounds1[bounds1$min == min(bounds1$min), ]$`Upper bound`
+  vrt1 = round(bounds1[bounds1$min == min(bounds1$min), ]$Gamma, 2)
+  hrz1 = round(bounds1[bounds1$min == min(bounds1$min), ]$`Upper bound`, 2)
 
 
-  plot = ggplot(data = bounds, aes(x = Gamma, y = `Upper bound`)) + geom_line() + geom_point(aes(x = vrt,y = hrz)) + ylab("p upper bound") + xlab("gamma (Bias)")+ylim(0,0.08) + theme_bw() + annotate("text",x = vrt + 0.1 * vrt, y = hrz, label = paste0("(", vrt1, ",", hrz1, ")")) + labs(title = plot_title,caption = paste("matching done by", class(x), "function")) + theme(plot.title = element_text(hjust = 0.5))
+  plot = ggplot(data = bounds1, aes(x = Gamma, y = `Upper bound`)) + geom_line() + geom_point(aes(x = vrt,y = hrz)) + ylab("p upper bound") + xlab("gamma (Bias)")+ylim(0,0.08) + theme_bw() + annotate("text",x = vrt + 0.1 * vrt, y = hrz, label = paste0("(", vrt1, ",", hrz1, ")")) + labs(title = plot_title,caption = paste("matching done by", class(x), "function")) + theme(plot.title = element_text(hjust = 0.5))
 
 
-  upperbound_pval = hrz = bounds[bounds$min == min(bounds$min), ]$`Upper bound`
-  Gamma = bounds[bounds$min == min(bounds$min), ]$Gamma
+  upperbound_pval = hrz = bounds1[bounds1$min == min(bounds1$min), ]$`Upper bound`
+  Gamma = bounds1[bounds1$min == min(bounds1$min), ]$Gamma
 
   msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
