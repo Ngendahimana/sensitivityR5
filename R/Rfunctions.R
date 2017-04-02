@@ -107,8 +107,7 @@ ampPlot <- function(gamma, lambda) {
 #' Visualizing sensivity results
 #'
 #' @param data  Dataset before matching.
-#' @param match_f  matching function that was used. Accepts match, matchit or bimatch only.
-#' @param object_name  name of the \code{match},\code{matchit} and \code{bimatch} object.
+#' @param x  name of the \code{match},\code{matchit} and \code{bimatch} object.
 #' @param exposure name of the exposure variable. This name must be in quotation marks.
 #' @param outcome name of the outcome variable. This name must be in quotation marks.
 #' @param Gamma Sensitivity parameter.

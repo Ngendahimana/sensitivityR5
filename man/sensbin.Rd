@@ -8,6 +8,8 @@ sensbin(x, y = NULL, data = NULL, exposure, outcome, Gamma, GammaInc,
   alpha = 0.05)
 }
 \arguments{
+\item{x}{name of the \code{match},\code{matchit} and \code{bimatch} object.}
+
 \item{data}{Dataset before matching.}
 
 \item{exposure}{name of the exposure variable. This name must be in quotation marks.}
@@ -19,10 +21,6 @@ sensbin(x, y = NULL, data = NULL, exposure, outcome, Gamma, GammaInc,
 \item{GammaInc}{Increamental value to be used in generating Sensitivity table}
 
 \item{alpha}{Significant value. Default is 0.05}
-
-\item{match_f}{matching function that was used. Accepts match, matchit or bimatch only.}
-
-\item{object_name}{name of the \code{match},\code{matchit} and \code{bimatch} object.}
 }
 \description{
 Visualizing sensivity results
