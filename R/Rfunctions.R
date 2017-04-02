@@ -144,7 +144,7 @@ ampPlot <- function(gamma, lambda) {
 #'
 #' # Using Matching object
 #'
-#' sensbin (object_name=match1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
+#' sensbin (x=match1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
 
 sensbin <- function(x,y=NULL,data=NULL, exposure, outcome, Gamma, GammaInc, alpha = 0.05) {
 
