@@ -140,11 +140,11 @@ ampPlot <- function(gamma, lambda) {
 #'
 #' # Using Matchit object
 #'
-#' sensbin (data= rhc1,match_f ='matchit',object_name=m.out1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
+#' sensbin (x=m.out1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
 #'
 #' # Using Matching object
 #'
-#' sensbin (data= rhc1,match_f ='Match',object_name=match1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
+#' sensbin (object_name=match1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
 
 sensbin <- function(x,y=NULL,data=NULL, exposure, outcome, Gamma, GammaInc, alpha = 0.05) {
 
@@ -268,7 +268,7 @@ sensbin <- function(x,y=NULL,data=NULL, exposure, outcome, Gamma, GammaInc, alph
 
 #' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-#' sensSurv(object_name = match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
+#' sensSurv(x= match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
 #'
 
 #' @references Rosenbum 2011

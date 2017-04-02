@@ -50,10 +50,10 @@ m.out1 <- matchit(swang1 ~ age + female + edu + income + ninsclas + race + cat1 
 
 # Using Matchit object
 
-sensbin (data= rhc1,match_f ='matchit',object_name=m.out1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
+sensbin (x=m.out1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
 
 # Using Matching object
 
-sensbin (data= rhc1,match_f ='Match',object_name=match1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
+sensbin (object_name=match1,data= rhc1,exposure = 'swang1',outcome = 'surv_30',Gamma = 1.5,GammaInc = 0.1)
 }
 
