@@ -577,9 +577,9 @@ contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma =
   msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
   Obj <- list(Gamma = Gamma,pval =upperbound_pval,alpha = alpha,
-              msg = msg,note = note,plot = plot)
+              msg = msg,note = note,plot = plot,bounds = bounds)
   #class(Obj) <- c("rbounds", class(Obj))
-  return(Obj)
+  Obj
 }
 
 
