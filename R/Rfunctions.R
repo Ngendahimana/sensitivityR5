@@ -346,8 +346,8 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
         bounds$plower[i] = round(min(1, 2 * pnorm((expoutlive - bounds[i, 4])/bounds[i, 6], lower.tail = FALSE)), 4)
     }
 
-    bounds = bounds[,c(1,8,7)]
-    names(bounds)=c("Gamma","Lower bound"," Upper bound")
+    bounds2 = bounds[,c(1,8,7)]
+    names(bounds2)=c("Gamma","Lower bound"," Upper bound")
     bounds1 = bounds
 
     bounds1$min = abs(alpha - bounds1$pupper)
@@ -364,7 +364,7 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
     results$plot = plot
     results$upperbound_pval = hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
     results$Gamma = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
-    results$bounds = bounds
+    results$bounds = bounds2
 
     return(results)
 
