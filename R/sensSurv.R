@@ -561,7 +561,7 @@ contSens = function (x, y = NULL,exp=NULL,outcome=NULL,CausalEst = NULL, Gamma =
   names(bounds) <- c("Gamma", "Lower bound", "Upper bound")
 
   bounds1 = bounds
-  bounds$min = abs(alpha - bounds$`Upper bound`)
+  bounds1$min = abs(alpha - bounds1$`Upper bound`)
   vrt = bounds1[bounds1$min == min(bounds1$min), ]$Gamma
   hrz = bounds1[bounds1$min == min(bounds1$min), ]$`Upper bound`
   vrt1 = round(bounds1[bounds1$min == min(bounds1$min), ]$Gamma, 2)
