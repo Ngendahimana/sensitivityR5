@@ -268,7 +268,7 @@ sensbin <- function(x,y=NULL,data=NULL, exposure, outcome, Gamma, GammaInc, alph
 
 #' match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
 
-#' sensSurv(x= match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
+#' Survsens(x= match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=2.4,Gammainterval = 0.01,alpha = 0.05,plot_title = 'Time To Event Outcome Sensitivity Plot')
 #'
 
 #' @references Rosenbum 2011
@@ -362,6 +362,7 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
     results$plot = plot
     results$upperbound_pval = hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
     results$Gamma = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
+    results$bounds = bounds
 
     return(results)
 
