@@ -7,19 +7,13 @@
 rubinRules(data, Treatment, matchscore = "ps", covlist)
 }
 \arguments{
-\item{data}{A matched sample}
+\item{data}{data set to be used.}
 
-\item{exp}{A variables defining exposure group}
+\item{Treatment}{A variables defining exposure group.}
 
-\item{outcome}{The outcome variable}
+\item{matchscore}{Variable containing matching distance. Default is propensity score}
 
-\item{failtime}{Time to event}
-
-\item{Gamma}{Bias to be assessed}
-
-\item{Gammainterval}{interval between two hidden bias to be assessed}
-
-\item{alpha}{Significance level}
+\item{covlist}{list of variables to be balanced. Note: All variable should be of numeric type.}
 }
 \description{
 This function allows you to assess how sensitive your results are to unmeasured variable.
@@ -35,8 +29,4 @@ covlist1=c('covA', 'covB', 'covC', 'covD', 'covE', 'covF.Middle', 'covF.High', '
 
 rubinRules(data=toy,Treatment='treated',covlist=covlist1)
 }
-\references{
-Section 4.4.8. of Rosenbaum PR (2002) Observational Studies, 2nd Edition.
-}
-\keyword{Sensitivity}
 
