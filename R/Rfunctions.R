@@ -68,7 +68,7 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
     mtext(paste("Rubin Two :", round(results$RUBIN2, 2)), side = 3)
     mtext(paste("Rubin One :", round(results$RUBIN1, 2)), side = 3, adj = 0)
 
-    result$plot = plot
+    results$plot = plot
     return(results)
 
 }
