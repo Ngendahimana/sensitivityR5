@@ -58,7 +58,7 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
     low <- min(min(d), 0.45)
     high <- max(max(d), 2.05)
 
-    plot = dotchart(d, pch = 15, col = "black", main = "Rubin's Rules plot", xlab = "Residual Variance Ratio", xlim = c(low, high))
+     dotchart(d, pch = 15, col = "black", main = "Rubin's Rules plot", xlab = "Residual Variance Ratio", xlim = c(low, high))
     abline(v = 1, lty = 1)
     abline(v = 0.8, lty = 2, lwd = 2, col = "blue")
     abline(v = 1.25, lty = 2, lwd = 2, col = "blue")
@@ -68,8 +68,8 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
     mtext(paste("Rubin Two :", round(results$RUBIN2, 2)), side = 3)
     mtext(paste("Rubin One :", round(results$RUBIN1, 2)), side = 3, adj = 0)
 
-
-    return(plot)
+    result$plot = plot
+    return(results)
 
 }
 
