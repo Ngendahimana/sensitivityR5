@@ -523,7 +523,7 @@ edaTable = function(baselinevars, outcomeVar, data) {
 #' @return a table of Rosenbaum bounds
 #' @examples
 #' ## Loading lalonde data
-#' library(Matching)
+#' library(Matching);library(MatchIt)
 #' data("lalonde",package = "Matching")
 #'
 #' ## Sensitivity analysis with a matchit object
@@ -552,6 +552,7 @@ edaTable = function(baselinevars, outcomeVar, data) {
 #' ## Sensitivity analysis with a matchit object
 
 #' data("lalonde",package = "designmatch")
+#' library(designmatch)
 #' attach(lalonde)
 
 #' ## Treatment indicator
@@ -584,7 +585,7 @@ edaTable = function(baselinevars, outcomeVar, data) {
 #' ## Match
 #' out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom, fine = fine, exact = exact, solver = solver)
 #'
-#' Sensitivity analysis with designmatch Object
+#' ## Sensitivity analysis with designmatch Object
 #' pens2(x = out, y="re78",Gamma = 2, GammaInc = 0.1,est = 234,treat = "treatment",data = lalonde)
 
 #' detach(lalonde)
@@ -627,7 +628,7 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
       }
 
       else {
-        data = arrange(data,desc(data[[treat]]))
+        data = dplyr::arrange(data,desc(data[[treat]]))
         rownames(data) = 1:dim(data)[1]
         if (est > 0) {
           trt = (data[as.character(x$t_id),])[[y]]

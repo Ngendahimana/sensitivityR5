@@ -30,7 +30,7 @@ Sensitivity analysis with Matching, MatchIt and designmatch objects.
 }
 \examples{
 ## Loading lalonde data
-library(Matching)
+library(Matching);library(MatchIt)
 data("lalonde",package = "Matching")
 
 ## Sensitivity analysis with a matchit object
@@ -55,6 +55,7 @@ pens2(mDW, Gamma = 2, GammaInc = 0.1)
 
 ## Sensitivity analysis with a matchit object
 data("lalonde",package = "designmatch")
+library(designmatch)
 attach(lalonde)
 ## Treatment indicator
 t_ind = treatment
@@ -80,7 +81,7 @@ solver = list(name = solver, t_max = t_max, approximate = approximate,round_cple
 ## Match
 out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom, fine = fine, exact = exact, solver = solver)
 
-Sensitivity analysis with designmatch Object
+## Sensitivity analysis with designmatch Object
 pens2(x = out, y="re78",Gamma = 2, GammaInc = 0.1,est = 234,treat = "treatment",data = lalonde)
 detach(lalonde)
 }
