@@ -2,7 +2,7 @@
 % Please edit documentation in R/Rfunctions.R
 \name{pens2}
 \alias{pens2}
-\title{Sensitivity analysis with Matching, MatchIt and designmatch objects.}
+\title{Sensitivity analysis with Matching, MatchIt and designmatch objects for a continous outcome.}
 \usage{
 pens2(x, y = NULL, est = NULL, Gamma = 2, GammaInc = 0.1, data = NULL,
   treat)
@@ -26,7 +26,7 @@ pens2(x, y = NULL, est = NULL, Gamma = 2, GammaInc = 0.1, data = NULL,
 a table of Rosenbaum bounds
 }
 \description{
-Sensitivity analysis with Matching, MatchIt and designmatch objects.
+Sensitivity analysis with Matching, MatchIt and designmatch objects for a continous outcome.
 }
 \examples{
 ## Loading lalonde data

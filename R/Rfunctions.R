@@ -510,7 +510,7 @@ edaTable = function(baselinevars, outcomeVar, data) {
 }
 
 
-#' Sensitivity analysis with Matching, MatchIt and designmatch objects.
+#' Sensitivity analysis with Matching, MatchIt and designmatch objects for a continous outcome.
 #'
 #' @param x Treatment group outcomes or an objects from a Match,MatchIt or designmatch.
 #' @param y Control group outcomes in same order as treatment group outcomes such that members of a pair occupy the same row in both x and y. Should not be specified x is a Matching, MatchIt and designmatch objects.
@@ -676,3 +676,151 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
   Obj
 }
 
+
+#' Sensitivity analysis with Matching, MatchIt and designmatch objects for a binary outcome.
+#'
+#' @param x Treatment group outcomes or an objects from a Match,MatchIt or designmatch.
+#' @param y Control group outcomes in same order as treatment group outcomes such that members of a pair occupy the same row in both x and y. Should not be specified x is a Matching, MatchIt and designmatch objects.
+#' @param Gamma Upper bound of sensitivity parameter
+#' @param GammaInc interval width for increasing gamma from 1 until the specified upper bound of sensitivity parameter is reached.
+#' @param data Dataframe used to during matching. You do not have to specify this parameter if x is a MatchIt object
+#' @param treat Treatmetn/Exposure variable name.
+#' @export
+#' @return a table of Rosenbaum bounds
+#' @examples
+#'
+#' ## Sensitivity analysis with a matchit object
+#' library(Matching);library(MatchIt);library(designmatch)
+#' data("GerberGreenImai",package = "Matching")
+
+#' ## Estimate Propensity Score
+#' pscore.glm <- glm(PHN.C1 ~ PERSONS + VOTE96.1 + NEW +MAJORPTY + AGE + WARD + PERSONS:VOTE96.1 + PERSONS:NEW + AGE2, family = binomial(logit), data = GerberGreenImai)
+
+#' ## save data objects
+#' D <- GerberGreenImai$PHN.C1
+#' Y <- GerberGreenImai$VOTED98
+#' X <- fitted(pscore.glm)
+
+#' ## Match - without replacement
+#' m.obj <- Match(Y = Y, Tr = D, X = X, M = 1, replace=FALSE)
+
+#' ## Sensitivity Test
+#' binarysens2(m.obj, Gamma=2, GammaInc=.1)
+
+#' ## Sensitivity analysis with a Match object
+
+#' m.out = matchit(PHN.C1 ~ PERSONS + VOTE96.1 + NEW +MAJORPTY + AGE + WARD , family=binomial, data = GerberGreenImai, method = "nearest")
+
+#' mod = lm(VOTED98 ~ PHN.C1+PERSONS + VOTE96.1 + NEW +MAJORPTY + AGE + WARD,data = match.data(m.out))
+
+#' binarysens2(x=m.out,y ="VOTED98", Gamma=2, GammaInc=.1)
+
+
+#' ## Sensitivity analysis with a designmatch object
+
+
+#' ## data("GerberGreenImai",package = "Matching")
+#' attach(GerberGreenImai)
+
+#' ## Treatment indicator
+#' t_ind = PHN.C1
+
+#' ## Distance matrix
+#' dist_mat = NULL
+
+#' ## Subset matching weight
+#' subset_weight = 1
+
+# Moment balance: constrain differences in means to be at most .05 standard deviations apart
+#' mom_covs = cbind(PERSONS,VOTE96.1 ,NEW , MAJORPTY , AGE , WARD)
+#' mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+#' mom = list(covs = mom_covs, tols = mom_tols)
+
+
+#' ## Solver options
+#' t_max = 60*5
+#' solver = "glpk"
+#' approximate = 1
+#' solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+#' ## Match
+#' out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom,solver = solver)
+
+#' binarysens2(x=out,y ="VOTED98", Gamma=2, GammaInc=.1,treat = "PHN.C1",data = GerberGreenImai)
+
+#' detach(GerberGreenImai)
+
+
+binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =NULL)
+{
+  if (length(x) == 1) {
+    ctrl <- x
+    trt <- y
+  }
+  else {
+    if (class(x)=="matchit"){
+      if(missing(y)){
+        warning("y not defined")
+      }
+      else{
+        y.t = (x$model$data[row.names(x$match.matrix),])[[y]]
+        y.c = (x$model$data[x$match.matrix[,1],])[[y]]
+      }
+
+    }
+
+    else if(class(x) == "Match"){
+      y.c <- x$mdata$Y[x$mdata$Tr == 0]
+      y.t <- x$mdata$Y[x$mdata$Tr == 1]
+
+    }
+
+    else if(class(x)== "list"){
+      data = dplyr::arrange(data,desc(data[[treat]]))
+      rownames(data) = 1:dim(data)[1]
+      y.t = (data[as.character(x$t_id),])[[y]]
+      y.c = (data[as.character(x$c_id),])[[y]]
+
+    }
+
+    else {
+      print("Accepts only matchit, match or bmatch objects.")
+    }
+
+    table(y.t, y.c)
+    y.tmp1 <- table(y.t, y.c)[2]
+    y.tmp2 <- table(y.t, y.c)[3]
+    if (y.tmp1 >= y.tmp2) {
+      trt <- y.tmp1
+      ctrl <- y.tmp2
+    }
+    else {
+      trt <- y.tmp2
+      ctrl <- y.tmp1
+    }
+
+  }
+
+  gamma <- seq(1, Gamma, by = GammaInc)
+  mx <- ctrl + trt
+  up <- c()
+  lo <- c()
+  series <- seq(trt, mx, by = 1)
+  n.it <- length(gamma)
+  for (i in 1:n.it) {
+    p.plus <- gamma[i]/(1 + gamma[i])
+    p.minus <- 1/(1 + gamma[i])
+    up.tmp <- sum(dbinom(series, mx, prob = p.plus))
+    lo.tmp <- sum(dbinom(series, mx, prob = p.minus))
+    up <- c(up, up.tmp)
+    lo <- c(lo, lo.tmp)
+  }
+  pval <- lo[1]
+  bounds <- data.frame(gamma, round(lo, 5), round(up, 5))
+  colnames(bounds) <- c("Gamma", "Lower bound", "Upper bound")
+  msg <- "Rosenbaum Sensitivity Test \n"
+  note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
+  Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
+              msg = msg, bounds = bounds, note = note)
+  class(Obj) <- c("rbounds", class(Obj))
+  Obj
+}
