@@ -384,7 +384,7 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
 #' library(ggplot2);library(Matching);library(MatchIt)
 #' data(toy)
 #'
-#' ## Creating Matching object
+#' ## Creating Matching Objects
 #' psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
 #' toy$linps = psmodel$fitted.values
 #' X <- toy$linps
