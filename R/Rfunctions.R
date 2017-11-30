@@ -685,8 +685,10 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
 #' @param GammaInc interval width for increasing gamma from 1 until the specified upper bound of sensitivity parameter is reached.
 #' @param data Dataframe used to during matching. You do not have to specify this parameter if x is a MatchIt object
 #' @param treat Treatmetn/Exposure variable name.
+#' @param alpha p-value to define maximum upper bound allowable
 #' @export
 #' @return a table of Rosenbaum bounds
+#'
 #' @examples
 #'
 #' ## Sensitivity analysis with a matchit object
@@ -749,8 +751,7 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
 
 #' detach(GerberGreenImai)
 
-
-binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =NULL)
+binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =NULL,alpha = 0.05)
 {
   if (length(x) == 1) {
     ctrl <- x
@@ -775,7 +776,7 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
     }
 
     else if(class(x)== "list"){
-      data = dplyr::arrange(data,desc(data[[treat]]))
+      data = arrange(data,desc(data[[treat]]))
       rownames(data) = 1:dim(data)[1]
       y.t = (data[as.character(x$t_id),])[[y]]
       y.c = (data[as.character(x$c_id),])[[y]]
@@ -815,12 +816,24 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
     lo <- c(lo, lo.tmp)
   }
   pval <- lo[1]
-  bounds <- data.frame(gamma, round(lo, 5), round(up, 5))
+
+  bounds <- data.frame(gamma, plower = round(lo, 5), pupper = round(up, 5))
+  bounds$min = abs(alpha - bounds$pupper)
+
+  vrt = bounds[bounds$min == min(bounds$min), ]$gamma
+  hrz = bounds[bounds$min == min(bounds$min), ]$pupper
+  vrt1 = round(bounds[bounds$min == min(bounds$min), ]$gamma, 2)
+  hrz1 = round(bounds[bounds$min == min(bounds$min), ]$pupper, 2)
+
+  plot = ggplot(data = bounds, aes(x = gamma, y = pupper)) + geom_line() + geom_point(aes(x = vrt, y = hrz)) + ylab("p upper bound") +
+    xlab("gamma (Bias)") + theme_bw() + annotate("text", x = vrt1 + 0.1, y = hrz1, label = paste0("(", vrt1, ",", hrz1,
+                                                                                                  ")")) + labs(title = "Binary Outcome Sensitivity Plot")
+
+
   colnames(bounds) <- c("Gamma", "Lower bound", "Upper bound")
   msg <- "Rosenbaum Sensitivity Test \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
-  Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
-              msg = msg, bounds = bounds, note = note)
-  class(Obj) <- c("rbounds", class(Obj))
-  Obj
+  Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval, msg = msg, bounds = bounds[, c(1:3)], note = note, plot = plot)
+  #class(Obj) <- c("rbounds", class(Obj))
+  return(Obj)
 }

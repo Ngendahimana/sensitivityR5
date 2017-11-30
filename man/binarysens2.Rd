@@ -5,7 +5,7 @@
 \title{Sensitivity analysis with Matching, MatchIt and designmatch objects for a binary outcome.}
 \usage{
 binarysens2(x, y = NULL, Gamma = 6, GammaInc = 1, data = NULL,
-  treat = NULL)
+  treat = NULL, alpha = 0.05)
 }
 \arguments{
 \item{x}{Treatment group outcomes or an objects from a Match,MatchIt or designmatch.}
@@ -19,6 +19,8 @@ binarysens2(x, y = NULL, Gamma = 6, GammaInc = 1, data = NULL,
 \item{data}{Dataframe used to during matching. You do not have to specify this parameter if x is a MatchIt object}
 
 \item{treat}{Treatmetn/Exposure variable name.}
+
+\item{alpha}{p-value to define maximum upper bound allowable}
 }
 \value{
 a table of Rosenbaum bounds
