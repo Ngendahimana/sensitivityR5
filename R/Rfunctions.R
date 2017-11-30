@@ -510,3 +510,108 @@ edaTable = function(baselinevars, outcomeVar, data) {
 }
 
 
+#' Sensitivity analysis with Matching, MatchIt and designmatch objects.
+#'
+#' @param x Treatment group outcomes or an objects from a Match,MatchIt or designmatch.
+#' @param y Control group outcomes in same order as treatment group outcomes such that members of a pair occupy the same row in both x and y. Should not be specified x is a Matching, MatchIt and designmatch objects.
+#' @param est Treatment effect. Must be specified if x is not a MatchIt object.
+#' @param Gamma Upper bound of sensitivity parameter
+#' @param GammaInc interval width for increasing gamma from 1 until the specified upper bound of sensitivity parameter is reached.
+#' @param data Dataframe used to during matching. You do not have to specify this parameter if x is a MatchIt object
+#' @param treat Treatmetn/Exposure variable name.
+#' @export
+#' @return a table of Rosenbaum bounds
+#' @examples
+#' data("lalonde",package = "Matching")
+#' m.out = matchit(treat ~ age  + educ +  black + hisp +married + nodegr + re74  + re75  +
+#' u74 + u75, family=binomial, data = lalonde, method = "nearest")
+
+#' mod = lm(re78~age  + educ +  black + hisp +married + nodegr + re74  + re75  +u74 + u75,data = match.data(m.out))
+#' pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
+
+pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,treat)
+{
+  if (length(x) == 1) {
+    ctrl <- x
+    trt <- y
+  }
+  else {
+    if (class(x) == "Match") {
+      if (x$est > 0) {
+        ctrl <- x$mdata$Y[x$mdata$Tr == 0]
+        trt <- x$mdata$Y[x$mdata$Tr == 1]
+      }
+      else {
+        ctrl <- x$mdata$Y[x$mdata$Tr == 1]
+        trt <- x$mdata$Y[x$mdata$Tr == 0]
+      }
+    }
+    else if(class(x) == "matchit"){
+      if(missing(est)){
+        stop("Est parameter missing")
+      }
+      else if (est > 0) {
+        trt = (x$model$data[row.names(x$match.matrix),])[[y]]
+        ctrl = (x$model$data[x$match.matrix[,1],])[[y]]
+      }
+      else {
+        ctrl = (x$model$data[row.names(x$match.matrix),])[[y]]
+        trt = (x$model$data[x$match.matrix[,1],])[[y]]
+      }
+
+    }
+
+    else if(class(x) == "list"){
+      if(missing(est)|missing(data)){
+        warning("Est or Data not specified")
+      }
+
+      else {
+        data = arrange(data,desc(data[[treat]]))
+        rownames(data) = 1:dim(data)[1]
+        if (est > 0) {
+          trt = (data[as.character(x$t_id),])[[y]]
+          ctrl = (data[as.character(x$c_id),])[[y]]
+        }
+        else {
+          ctrl = (data[as.character(x$t_id),])[[y]]
+          trt = (data[as.character(x$c_id),])[[y]]
+        }
+      }
+
+    }
+  }
+  # Actual computations
+  gamma <- seq(1, Gamma, by = GammaInc)
+  m <- length(gamma)
+  pvals <- matrix(NA, m, 2)
+  diff <- trt - ctrl
+  S <- length(diff)
+  diff <- diff[diff != 0]
+  ranks <- rank(abs(diff), ties.method = "average")
+  psi <- as.numeric(diff > 0)
+  T <- sum(psi * ranks)
+  for (i in 1:m) {
+    p.plus <- gamma[i]/(1 + gamma[i])
+    p.minus <- 1/(1 + gamma[i])
+    E.T.plus <- sum(ranks * p.plus)
+    V.T <- sum(ranks^2 * p.plus * (1 - p.plus))
+    E.T.minus <- sum(ranks * p.minus)
+    z.plus <- (T - E.T.plus)/sqrt(V.T)
+    z.minus <- (T - E.T.minus)/sqrt(V.T)
+    p.val.up <- 1 - pnorm(z.plus)
+    p.val.low <- 1 - pnorm(z.minus)
+    pvals[i, 1] <- round(p.val.low, digits = 4)
+    pvals[i, 2] <- round(p.val.up, digits = 4)
+  }
+  pval <- pvals[1, 1]
+  bounds <- data.frame(gamma, pvals)
+  names(bounds) <- c("Gamma", "Lower bound", "Upper bound")
+  msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
+  note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
+  Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
+              msg = msg, bounds = bounds, note = note)
+  class(Obj) <- c("rbounds", class(Obj))
+  Obj
+}
+
