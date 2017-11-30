@@ -29,10 +29,59 @@ a table of Rosenbaum bounds
 Sensitivity analysis with Matching, MatchIt and designmatch objects.
 }
 \examples{
+## Loading lalonde data
+library(Matching)
 data("lalonde",package = "Matching")
+
+## Sensitivity analysis with a matchit object
 m.out = matchit(treat ~ age  + educ +  black + hisp +married + nodegr + re74  + re75  +
 u74 + u75, family=binomial, data = lalonde, method = "nearest")
+
+## Estimating treatment effect. Ideally, balance assessement should be done prior to estimating treatment effect
 mod = lm(re78~age  + educ +  black + hisp +married + nodegr + re74  + re75  +u74 + u75,data = match.data(m.out))
 pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
+
+## using match object
+## Estimate Propensity Score
+data("lalonde",package = "Matching")
+DWglm <- glm(treat ~ age + I(age^2) + educ + I(educ^2) + black + hisp +married + nodegr + re74 + I(re74^2) + re75 + I(re75^2) +u74 + u75, family=binomial, data=lalonde)
+## Specifying outcome and treatment(Exposure)
+Y  <- lalonde$re78
+Tr <- lalonde$treat
+## Matching using Match object.
+mDW  <- Match(Y=Y, Tr=Tr, X=DWglm$fitted, replace=FALSE)
+## Sensitivity analysis
+pens2(mDW, Gamma = 2, GammaInc = 0.1)
+
+## Sensitivity analysis with a matchit object
+data("lalonde",package = "designmatch")
+attach(lalonde)
+## Treatment indicator
+t_ind = treatment
+## Distance matrix
+dist_mat = NULL
+## Subset matching weight
+subset_weight = 1
+## Moment balance: constrain differences in means to be at most .05 standard deviations apart
+mom_covs = cbind(age, education, black, hispanic, married, nodegree, re74, re75)
+mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+## Fine balance
+fine_covs = cbind(black, hispanic, married, nodegree)
+fine = list(covs = fine_covs)
+## Exact matching
+exact_covs = cbind(black)
+exact = list(covs = exact_covs)
+## Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+## Match
+out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom, fine = fine, exact = exact, solver = solver)
+
+Sensitivity analysis with designmatch Object
+pens2(x = out, y="re78",Gamma = 2, GammaInc = 0.1,est = 234,treat = "treatment",data = lalonde)
+detach(lalonde)
 }
 
