@@ -12,7 +12,10 @@ Imports:
 Suggests:
     MatchIt,
     Matching,
-    designmatch
+    designmatch,
+    knitr,
+    rmarkdown
 License: what license?
 LazyData: TRUE
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
