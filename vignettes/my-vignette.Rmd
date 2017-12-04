@@ -1,5 +1,5 @@
 ---
-title: "Package designmatch,matchit and Matchit"
+title: " A Package to perform sensitivity analysis using designmatch,Match and Matchit objects directly"
 author: "Vignette Author"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
