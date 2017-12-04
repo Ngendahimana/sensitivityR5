@@ -1,5 +1,5 @@
 ---
-title: "designmatch,matchit and Matchit"
+title: "Package designmatch,matchit and Matchit"
 author: "Vignette Author"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
