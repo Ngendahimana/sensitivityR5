@@ -11,7 +11,7 @@ rubinRules(data, Treatment, matchscore = "ps", covlist)
 
 \item{Treatment}{A variables defining exposure group.}
 
-\item{matchscore}{Variable containing matching distance. Default is propensity score}
+\item{matchscore}{Variable containing matching distance.Default is propensity score.}
 
 \item{covlist}{list of variables to be balanced. Note: All variable should be of numeric type.}
 }

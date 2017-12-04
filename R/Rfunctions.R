@@ -3,7 +3,7 @@
 #' This function allows you to assess how sensitive your results are to unmeasured variable.
 #' @param data data set to be used.
 #' @param Treatment A variables defining exposure group.
-#' @param matchscore Variable containing matching distance. Default is propensity score.
+#' @param matchscore Variable containing matching distance.Default is propensity score.
 #' @param covlist list of variables to be balanced. Note: All variable should be of numeric type.
 #' @export
 #' @examples
