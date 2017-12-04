@@ -1,5 +1,5 @@
 ---
-title: "SensitivityR5 for designmatch,matchit and Matchit"
+title: "designmatch,matchit and Matchit"
 author: "Vignette Author"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
