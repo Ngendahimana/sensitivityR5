@@ -1,5 +1,5 @@
 ---
-title: " A Package to perform sensitivity analysis using designmatch,Match and Matchit objects directly"
+title: " A Package to assess Rubin rules, perform sensitivity analysis using designmatch,Match and Matchit objects directly"
 author: "Vignette Author"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -15,6 +15,28 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+#Introduction.
+
+Over the past few decades, technology has made it easier for researchers to access variety of  observational data. Such data include information collected from patient medical records, national surveys et al. Availability of this data provides opportunities for exploring important research questions, however to do so one has be careful in designing studies based on these data. A common use of observation study is in estimating treatment effect. This typically involves defining a variable to measured exposure and then using it to identify a treatment and control group. Since the gold standard for estimating a treatment effect is to use data collected from a randomized clinical trial, observational data has to be preprocessed using observational study design algorithms to ensure data used to make treatment effect is as similar as possible to data that would have been obtained from a clinical trial. 
+
+One of the assumptions made when estimating treatment effect from observational studies is what is called the the ignorabiltiy assumption,that is, only the observed covariates are sufficient to explain any meaningful differences between the treatment and control groups. The consequence of this assumption is that if the groups being compared are similar on average, on these observed covariates , then any differences in the outcome being studied is due to treatment- the only distinguishing factor between the groups being compared. The design phase of an observational study is usually focused on achieving the best possible balance of observed covariates between the treated and control group. Several design algorithms have been proposed and R packages that implement them are widely available.  The main steps during the design phase of an observational study are:
+
+1. Determine variables that confounder the relationship between treatment and outcome
+2. Using confounders in step 1, compute a metric (e.g propensity score) to be used to measure distance between any two observations
+3. Match observation based on the metric in step 2
+4. Assess balance of variables in step 1 across treatmetn and contrl group. If balance is poor repeat stpe 2-4.
+5. Estimate the treatment effect in the preprocessed sample
+
+In his 2008 paper , Stuart et al provides a detailed description of the major design algorithms and R packages that implement them. 
+
+When designing an observation study, one usually has to run different matching algorthm and pick one that gives the best balance. With various matching algorthms housed in different R packages , for sometime , it was hard to compare across design methods. To easy this process, Greifer et al developed the `cobalt` package that interacts seamelessly  with objects from `Matching` and `MacthIt` packages and generate key balance summary statistics on.
+
+The main critique of observational studies that use matched sampling design methods is that treatment effect estimates obtained are premised on the assumption that observed variables are sufficient to explain the differences between treated and control group. To deal with this criticism , Rosenbaum developed a sensitivity analysis framework that , if a significant treatmetn effect exists, computes a parameter to quantify a bias magnitude due to unmeasured confounders that would be required to nullify significant results. Presenting results of these sensitivity analysis allows the reader to make an informed decision on how much faith to place in your findings.
+
+A significant portion of sensitivity methods developed by Rosenbaum has been implemented in the `rbounds`package (Keele,2008). However `rbounds` functions only interact with objects from the `Matching` package. Our packages interacts seamlessly with objects from packages that implement matching methods not implemented in `Matching` package, specifically `MatchIt`(Ho et al 2007) and `designmatch`(Zubezarreta et al 2016). The package also provides  a set of plots used to visual essential aspects of whether an algorithm has achieved sufficient balance as prescribed by Rubin et al (2000). The rest of this guide wil focus on how to use functions within this package.
+
+
 
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 
