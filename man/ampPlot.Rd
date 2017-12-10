@@ -2,7 +2,7 @@
 % Please edit documentation in R/Rfunctions.R
 \name{ampPlot}
 \alias{ampPlot}
-\title{Amplifying and visualizing gamma parameter}
+\title{Amplifying and visualizing gamma parameter.}
 \usage{
 ampPlot(gamma, lambda)
 }
@@ -15,7 +15,7 @@ ampPlot(gamma, lambda)
 An amplification plot.
 }
 \description{
-Amplifying and visualizing gamma parameter
+Amplifying and visualizing gamma parameter.
 }
 \examples{
 ampPlot(10, c(12,13,30))

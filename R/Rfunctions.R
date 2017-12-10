@@ -82,7 +82,7 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
 
 }
 
-#' Amplifying and visualizing gamma parameter
+#' Amplifying and visualizing gamma parameter.
 #'
 #' @param gamma  gamma parameter to be amplfied.
 #' @param lambda  vector of 3 possible n-fold increase in odds of treatment to be amplified.
