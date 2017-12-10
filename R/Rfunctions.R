@@ -784,7 +784,7 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
     }
 
     else if(class(x)== "list"){
-      data = arrange(data,desc(data[[treat]]))
+      data = dplyr::arrange(data,desc(data[[treat]]))
       rownames(data) = 1:dim(data)[1]
       y.t = (data[as.character(x$t_id),])[[y]]
       y.c = (data[as.character(x$c_id),])[[y]]
