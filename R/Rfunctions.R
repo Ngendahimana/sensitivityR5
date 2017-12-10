@@ -68,7 +68,7 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
     geom_vline(xintercept = 0.8,colour = "blue",linetype = "dashed")+
     geom_vline(xintercept = 1.25,colour = "blue",linetype = "dashed")+
     geom_vline(xintercept = 0.5,colour = "red",linetype = "dashed")+
-    geom_vline(xintercept = 2,colour = "red",linetype = "dashed")+ labs(x = "Residual Variance Ration",y= " Variables",title = "Rubin's Rules Plot",subtitle = paste0(" Rubin One:",round(results$RUBIN1, 2),"                                                                Rubin Two: ",round(results$RUBIN2, 2)))
+    geom_vline(xintercept = 2,colour = "red",linetype = "dashed")+ labs(x = "Residual Variance Ratio",y= " Variables",title = "Rubin's Rules Plot",subtitle = paste0(" Rubin One:",round(results$RUBIN1, 2),"                                                                Rubin Two: ",round(results$RUBIN2, 2)))
 
 
 
