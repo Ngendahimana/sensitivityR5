@@ -287,7 +287,7 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
         extractor = (c(x$index.treated, x$index.control))
         group_id = c(c(1:length(x$index.treated)), c(1:length(x$index.control)))
         data1s = data[extractor, c(exp, outcome, failtime)]
-        data1s$match = group_id
+        data1s$match2 = group_id
 
 
     } else if (class(x) == "matchit") {
