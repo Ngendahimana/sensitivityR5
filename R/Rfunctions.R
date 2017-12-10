@@ -64,10 +64,10 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
   high <- max(max(d), 2.05)
 
 
-  res3 <- res2 %>%
+  res4 <- res2 %>%
     dplyr::arrange(Rubin3) %>%
     mutate(VarName = factor(VarName, levels = .$VarName))
-  p0 = ggplot(res3, aes(Rubin3, VarName))+geom_point()+
+  p0 = ggplot(res4, aes(Rubin3, VarName))+geom_point()+
     geom_vline(xintercept = 1,colour = "black")+
     geom_vline(xintercept = 0.8,colour = "blue",linetype = "dashed")+
     geom_vline(xintercept = 1.25,colour = "blue",linetype = "dashed")+
