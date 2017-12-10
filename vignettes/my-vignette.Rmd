@@ -83,7 +83,7 @@ psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + B
 toy$ps <- psmodel$fitted
 toy$linps <- psmodel$linear.predictors
 covlist1=c('covA', 'covB', 'covC', 'covD', 'covE', 'covF.Middle', 'covF.High', 'Asqr','BC', 'BD')
-k =rubinRules(data=toy,Treatment='treated',covlist=covlist1)
+k =rubinRules2(data=toy,Treatment='treated',covlist=covlist1)
 k$plot
 
 ```
