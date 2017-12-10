@@ -62,7 +62,7 @@ rubinRules2 = function(data, Treatment, matchscore = "ps", covlist) {
 
   res3 <- res2 %>%
     dplyr::arrange(Rubin3) %>%
-    mutate(VarName = factor(VarName, levels = .$VarName))
+    plyr::mutate(VarName = factor(VarName, levels = .$VarName))
   p0 = ggplot(res3, aes(Rubin3, VarName))+geom_point()+
     geom_vline(xintercept = 1,colour = "black")+
     geom_vline(xintercept = 0.8,colour = "blue",linetype = "dashed")+

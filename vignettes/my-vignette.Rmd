@@ -88,7 +88,15 @@ k$plot
 
 ```
 
-The first two Rubin balance meausures are displayed at the top of the plot while the third measures which consists of series of variance ratios for each variable are displayed inside the dot plot. To obtain the actual numerical values , various items can be called off of the list (k) using conventional R methods. For example to obtain the numerical values for the thired rubin guideline the following line of code can be executed:
+The first two Rubin balance meausures are displayed at the top of the plot while the third balance measure which consists of series of residual variance ratios for variable are displayed inside the dot plot. The blue lines indicate acceptable range for the residual variance ratios. Ratio outside region bounded by the red lines are considered unacceptable. This plot is a `ggplot` object and therefore can be modified using `ggplot` options. For example to modify the plot title and background, the following code could be executed:
+
+
+```{r modifyrubinRules,fig.width = 7.5, fig.asp =1,message=FALSE,warning=FALSE}
+k$plot+geom_bw()+labs(title = "Assessing Rubin (2010) Balance Measures")
+```
+
+
+To obtain the actual numerical values , various items can be called off of the list (k) using conventional R methods. For example to obtain the numerical values for the thired rubin guideline the following line of code can be executed:
 
 ```{r individualRubinComponents}
 k$RUBIN3
