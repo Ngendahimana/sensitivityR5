@@ -59,10 +59,6 @@ rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
 
   results$RUBIN3 = res2
 
-  d <- sort(res2$Rubin3)
-  low <- min(min(d), 0.45)
-  high <- max(max(d), 2.05)
-
 
   res3 <- res2 %>%
     dplyr::arrange(Rubin3) %>%
