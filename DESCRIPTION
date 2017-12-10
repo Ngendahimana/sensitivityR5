@@ -8,7 +8,9 @@ Description: This package supports implementation of sensitivity analyisis using
 Imports:
     dplyr,
     ggplot2,
-    compareGroups
+    compareGroups,
+    tidyverse,
+    tidyr
 Suggests:
     MatchIt,
     Matching,
