@@ -18,7 +18,7 @@
 #' rubinRules(data=toy,Treatment='treated',covlist=covlist1)
 
 
-rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
+rubinRules2 = function(data, Treatment, matchscore = "ps", covlist) {
 
   results = list()
 
