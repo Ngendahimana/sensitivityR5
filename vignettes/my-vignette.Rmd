@@ -1,6 +1,6 @@
 ---
 title: " A Package to assess Rubin rules, perform sensitivity analysis using designmatch,Match and Matchit objects directly"
-author: "Vignette Author"
+author: "David N."
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
+
 #Introduction.
 
 Over the past few decades, technology has made it easier for researchers to access variety of  observational data. Such data include information collected from patient medical records, national surveys et al. Availability of this data provides opportunities for exploring important research questions, however to do so one has be careful in designing studies based on these data. A common use of observation study is in estimating treatment effect. This typically involves defining a variable to measured exposure and then using it to identify a treatment and control group. Since the gold standard for estimating a treatment effect is to use data collected from a randomized clinical trial, observational data has to be preprocessed using observational study design algorithms to ensure data used to make treatment effect is as similar as possible to data that would have been obtained from a clinical trial. 
@@ -25,63 +26,71 @@ One of the assumptions made when estimating treatment effect from observational 
 1. Determine variables that confounder the relationship between treatment and outcome
 2. Using confounders in step 1, compute a metric (e.g propensity score) to be used to measure distance between any two observations
 3. Match observation based on the metric in step 2
-4. Assess balance of variables in step 1 across treatmetn and contrl group. If balance is poor repeat stpe 2-4.
+4. Assess balance of variables in step 1 across treatment and control group. If balance is poor repeat step 2-4.
 5. Estimate the treatment effect in the preprocessed sample
 
 In his 2008 paper , Stuart et al provides a detailed description of the major design algorithms and R packages that implement them. 
 
-When designing an observation study, one usually has to run different matching algorthm and pick one that gives the best balance. With various matching algorthms housed in different R packages , for sometime , it was hard to compare across design methods. To easy this process, Greifer et al developed the `cobalt` package that interacts seamelessly  with objects from `Matching` and `MacthIt` packages and generate key balance summary statistics on.
+When designing an observation study, one usually has to run different matching algorithm and pick one that gives the best balance. With various matching algorithms housed in different R packages , for sometime , it was hard to compare across design methods. To easy this process, Greifer et al developed the `cobalt` package that interacts seamlessly  with objects from `Matching` and `MacthIt` packages and generate key balance summary statistics on.
 
-The main critique of observational studies that use matched sampling design methods is that treatment effect estimates obtained are premised on the assumption that observed variables are sufficient to explain the differences between treated and control group. To deal with this criticism , Rosenbaum developed a sensitivity analysis framework that , if a significant treatmetn effect exists, computes a parameter to quantify a bias magnitude due to unmeasured confounders that would be required to nullify significant results. Presenting results of these sensitivity analysis allows the reader to make an informed decision on how much faith to place in your findings.
+The main critique of observational studies that use matched sampling design methods is that treatment effect estimates obtained are premised on the assumption that observed variables are sufficient to explain the differences between treated and control group. To deal with this criticism , Rosenbaum developed a sensitivity analysis framework that , if a significant treatment effect exists, computes a parameter to quantify a bias magnitude due to unmeasured confounders that would be required to nullify significant results. Presenting results of these sensitivity analysis allows the reader to make an informed decision on how much faith to place in your findings.
 
-A significant portion of sensitivity methods developed by Rosenbaum has been implemented in the `rbounds`package (Keele,2008). However `rbounds` functions only interact with objects from the `Matching` package. Our packages interacts seamlessly with objects from packages that implement matching methods not implemented in `Matching` package, specifically `MatchIt`(Ho et al 2007) and `designmatch`(Zubezarreta et al 2016). The package also provides  a set of plots used to visual essential aspects of whether an algorithm has achieved sufficient balance as prescribed by Rubin et al (2000). The rest of this guide wil focus on how to use functions within this package.
+A significant portion of sensitivity methods developed by Rosenbaum has been implemented in the `rbounds`package (Keele,2008). However `rbounds` functions only interact with objects from the `Matching` package. The package does not also implement a sensitivity analysis method for time to event outcomes. To perform sensitivity analysis involving matched sets, Rosenbaum developed two packages `sensitivitymv` and `sensitivitymw`(Rosenbaum,2013). These two packages also provide more robust test statistic that increase the power of sensitivity. However, to perform sensitivity analysis using these packages require reshaping your data set to conform to a certain format.
+
+It is important to note that this package does not replace the highly sophisticated matching and  sensitivity tools in the packages described above. What this package does is to bridge the most common matching packages to various sensitivity packages where such connections do not exist and would require more work on the part of the analyst.
+
+# Why use this package ?
+
+## Easy sensitivity analyisis when matched sampling is not necessary done with `Matching` package.
+Our packages interacts seamlessly with objects from packages that implement matching methods not contained in the `Matching` package, specifically `MatchIt`(Ho et al 2007) and `designmatch`(Zubezarreta et al 2016). This package therefore gives the user the freedom to perform sensitivity analysis using output from any matching package. 
 
 
+## Sensitivity analysis for matched sets from any package.
+Unlike `rbounds` which implements sensitivity analysis for matched pairs only , this package contains functions which accept objects from various matching packages that produce matched sets. These functions will then ,simultaneously, transforms and performs sensitivity analysis using these objects. Using this package in this way can save significant time require to transform objects from various packages to create valid inputs for `sensitivitymv` or `sensitivitymw`, the two packages that perform sensitivity analysis for matched sets.
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+## Balance and Sensitivity Analysis Plots.
+Most matching packages contain plots and tables useful in judging quality of matches obtained after matching, the most common being the love plot (Thomas Love). This package adds to these tools by providing sensitivity analysis and amplification plots(Rosenbaum ,2013) to help visualize and interpret findings.
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
 
-## Vignette Info
+# Using the package.
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+This package contains four main functions `rubinrules()`, `pens2()`, `binarysens2`, `t2event()` . Other auxilliary functions in the package include  `ampPlot()` and `eda()`. In the sections that follow , a detailed description of how each is used is given.
 
-## Styles
+Currently this package is housed on github therefore to install it use the following code:
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+```{r packageinstall,eval=FALSE}
+install.packages("devtools")
+devtools::install_github("Ngendahimana/SensitivityR5")
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+## rubinRules
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+`rubinRules()` is a function that can be use to evaluate the three balance meusures suggested by Rubin (2001) and are based on the theory published in another paper by Rubin and Thomas (2006). Rubin Provides three guidelines to ensure that the results of regression adjustment - often conducted in the analysis phase of observational studies to clear any residual imbalances - are valid. The three guidelines are: 
 
-## More Examples
++ Rule 1: The absolute standardized difference of means of the propensity score should be less than 0.25.
++ Rule 2: The ratio of the variances of the propensity score in the treated and control groups should be between 0.5 and 2
++ Rule 3: For each covariate, the ratio of the variance of the residuals orthogonal to the propensity score in the treated and control groups should be between 0.5 and 2.
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+An example of how to use the `rubinRules` function to assess these guidelines is illustrated below
+
+```{r rubinRules,fig.width = 7.5, fig.asp =1,message=FALSE,warning=FALSE}
+
+data(toy)
+psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
+toy$ps <- psmodel$fitted
+toy$linps <- psmodel$linear.predictors
+covlist1=c('covA', 'covB', 'covC', 'covD', 'covE', 'covF.Middle', 'covF.High', 'Asqr','BC', 'BD')
+k =rubinRules(data=toy,Treatment='treated',covlist=covlist1)
+k$plot
+
 ```
 
-Also a quote using `>`:
+The first two Rubin balance meausures are displayed at the top of the plot while the third measures which consists of series of variance ratios for each variable are displayed inside the dot plot. To obtain the actual numerical values , various items can be called off of the list (k) using conventional R methods. For example to obtain the numerical values for the thired rubin guideline the following line of code can be executed:
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+```{r individualRubinComponents}
+k$RUBIN3
+
+```

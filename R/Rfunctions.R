@@ -20,59 +20,67 @@
 
 rubinRules = function(data, Treatment, matchscore = "ps", covlist) {
 
-    results = list()
+  results = list()
 
-    # Rubin 1
-    data1a = subset(data, select = c(Treatment, matchscore))
-    names(data1a)[c(1:2)] = c("Treatment", "matchscore")
-    data1a$Treatment = as.factor(data1a$Treatment)
+  # Rubin 1
+  data1a = subset(data, select = c(Treatment, matchscore))
+  names(data1a)[c(1:2)] = c("Treatment", "matchscore")
+  data1a$Treatment = as.factor(data1a$Treatment)
 
-    results$RUBIN1 <- with(data1a, abs(100 * (mean(matchscore[Treatment == "1"]) - mean(matchscore[Treatment == "0"]))/sd(matchscore)))
+  results$RUBIN1 <- with(data1a, abs(100 * (mean(matchscore[Treatment == "1"]) - mean(matchscore[Treatment == "0"]))/sd(matchscore)))
 
-    # Rubin 2
+  # Rubin 2
 
-    results$RUBIN2 <- with(data1a, var(matchscore[Treatment == "1"])/var(matchscore[Treatment == "0"]))
+  results$RUBIN2 <- with(data1a, var(matchscore[Treatment == "1"])/var(matchscore[Treatment == "0"]))
 
 
-    # Rubin 3
-    data1d = subset(data, select = c(Treatment, matchscore))
-    names(data1d) = c("Treatment", "matchscore")
-    data1f = as.data.frame(cbind(data, data1d))
+  # Rubin 3
+  data1d = subset(data, select = c(Treatment, matchscore))
+  names(data1d) = c("Treatment", "matchscore")
+  data1f = as.data.frame(cbind(data, data1d))
 
-    data1f$Treatment = as.factor(data1f$Treatment)
-    covlist1 = data1f[covlist]
-    covlist2 <- as.matrix(covlist1)
-    res <- NA
-    for (i in 1:ncol(covlist2)) {
-        cov <- as.numeric(covlist2[, i])
-        num <- var(resid(lm(cov ~ data1f$matchscore))[data1f$Treatment == "1"])
-        den <- var(resid(lm(cov ~ data1f$matchscore))[data1f$Treatment == "0"])
-        res[i] <- round(num/den, 3)
-    }
-    names(res) <- names(covlist1)
-    # print(res)
+  data1f$Treatment = as.factor(data1f$Treatment)
+  covlist1 = data1f[covlist]
+  covlist2 <- as.matrix(covlist1)
+  res <- NA
+  for (i in 1:ncol(covlist2)) {
+    cov <- as.numeric(covlist2[, i])
+    num <- var(resid(lm(cov ~ data1f$matchscore))[data1f$Treatment == "1"])
+    den <- var(resid(lm(cov ~ data1f$matchscore))[data1f$Treatment == "0"])
+    res[i] <- round(num/den, 3)
+  }
+  names(res) <- names(covlist1)
+  # print(res)
+  res2 = data.frame(res)
+  res2$VarName = rownames(res2)
+  rownames(res2) = 1:dim(res2)[1]
+  res2 = res2[,c("VarName","res")]
+  names(res2)[2] = "Rubin3"
 
-    results$RUBIN3 = res
+  results$RUBIN3 = res2
 
-    d <- sort(res)
-    low <- min(min(d), 0.45)
-    high <- max(max(d), 2.05)
+  d <- sort(res2$Rubin3)
+  low <- min(min(d), 0.45)
+  high <- max(max(d), 2.05)
 
-     dotchart(d, pch = 15, col = "black", main = "Rubin's Rules plot", xlab = "Residual Variance Ratio", xlim = c(low, high))
-    abline(v = 1, lty = 1)
-    abline(v = 0.8, lty = 2, lwd = 2, col = "blue")
-    abline(v = 1.25, lty = 2, lwd = 2, col = "blue")
-    abline(v = 0.5, lty = 2, lwd = 2, col = "red")
-    abline(v = 2, lty = 2, lwd = 2, col = "red")
 
-    mtext(paste("Rubin Two :", round(results$RUBIN2, 2)), side = 3)
-    mtext(paste("Rubin One :", round(results$RUBIN1, 2)), side = 3, adj = 0)
+  res3 <- res2 %>%
+    arrange(Rubin3) %>%
+    mutate(VarName = factor(VarName, levels = .$VarName))
+  p0 = ggplot(res3, aes(Rubin3, VarName))+geom_point()+
+    geom_vline(xintercept = 1,colour = "black")+
+    geom_vline(xintercept = 0.8,colour = "blue",linetype = "dashed")+
+    geom_vline(xintercept = 1.25,colour = "blue",linetype = "dashed")+
+    geom_vline(xintercept = 0.5,colour = "red",linetype = "dashed")+
+    geom_vline(xintercept = 2,colour = "red",linetype = "dashed")+ labs(x = "Residual Variance Ration",y= " Variables",title = "Rubin's Rules Plot",subtitle = paste0(" Rubin One:",round(results$RUBIN1, 2),"                                                                Rubin Two: ",round(results$RUBIN2, 2)))
 
-    results$plot = plot
-    return(results)
+
+
+  results$plot = p0
+
+  return(results)
 
 }
-
 
 #' Amplifying and visualizing gamma parameter
 #'
