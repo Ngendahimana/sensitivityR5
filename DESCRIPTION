@@ -9,8 +9,7 @@ Imports:
     dplyr,
     ggplot2,
     compareGroups,
-    tidyr,
-    tidyverse
+    tidyr
 Suggests:
     MatchIt,
     Matching,

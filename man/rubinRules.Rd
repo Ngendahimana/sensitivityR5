@@ -2,7 +2,7 @@
 % Please edit documentation in R/Rfunctions.R
 \name{rubinRules}
 \alias{rubinRules}
-\title{Assessing the three rubin rules}
+\title{Assessing the three Rubin Rules.}
 \usage{
 rubinRules(data, Treatment, matchscore = "ps", covlist)
 }
