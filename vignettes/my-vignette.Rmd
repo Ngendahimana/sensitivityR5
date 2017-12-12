@@ -13,8 +13,10 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
+  library(tidyverse);library(tidyr)
 )
 ```
+
 
 
 #Introduction.
