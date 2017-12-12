@@ -63,7 +63,8 @@ detach(lalonde)
 
 # Example of cardinality Matching
 love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
-# Example of MatchIt
+
+# Example with  MatchIt package
 # data("lalonde") if not yet loaded
 covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
 # Nearest neighbor 1:1 matching with replacement
@@ -71,7 +72,8 @@ library("MatchIt") #if not yet loaded
 m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE)
 love_plot(X =m.out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
 
-# Example for for Matching
+# Example with Matching package
+
 library("Matching")
 #data("lalonde") #If not yet loaded
 covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))

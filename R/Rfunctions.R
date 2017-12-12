@@ -896,7 +896,8 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
 #'
 #' # Example of cardinality Matching
 #' love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
-#' # Example of MatchIt
+#'
+#' # Example with  MatchIt package
 #' # data("lalonde") if not yet loaded
 #' covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
 
@@ -906,7 +907,8 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
 
 #' love_plot(X =m.out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
 #'
-#' # Example for for Matching
+#' # Example with Matching package
+#'
 #' library("Matching")
 #' #data("lalonde") #If not yet loaded
 #' covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
