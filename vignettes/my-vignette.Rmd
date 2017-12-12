@@ -113,9 +113,9 @@ The code chunk below shows how to accomplish this.
 
 ### Using `designmatch` objects 
 
-This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size. To implement cardinality matchng (using the lalonde data), the following code can be be executed
+This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score.
 
-```{r cardinalityMatch,echo=FALSE}
+```{r cardinalityMatch,echo=FALSE,warning=FALSE,message=FALSE}
 
 data("lalonde",package = "cobalt")
 attach(lalonde)
@@ -158,22 +158,25 @@ detach(lalonde)
 
 ```
 
-To assesse balance with `love_plot`function in this package you would need to execute the following code
+To assess balance with `love_plot` function in this package after cardinality matching you would need to execute the following code
 
-```{r LoveplotDesignMatch,fig.width=5,fig.asp=1}
+```{r LoveplotDesignMatch,fig.width=6,fig.asp=1.5,message=FALSE,warning=FALSE}
 p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
 
 p
 ```
 
-This plot can be enhanced using `ggplot2` features. For example we can add disired standardized difference treshholds of , say , -0.1 to 0.1 
+Note that `out` is an object from the `designmatch` package that implements cardinality matching.
 
-```{r modifyLoveplotDesignMatch,fig.width=5,fig.asp=1}
-p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1)
+This plot can be enhanced using `ggplot2` features. For example we can add desired standardized difference threshhold lines  , say,  from -0.1 to 0.1 and remove the legend title with the following code: 
+
+```{r modifyLoveplotDesignMatch,fig.width=6,fig.asp=1,warning=FALSE,message=FALSE}
+p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(legend.title = element_blank())
 
 ```
 
-### Using `MatchIt` or `Matching` objects
+
+Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package. 
 
 
 
