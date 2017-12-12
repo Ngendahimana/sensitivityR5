@@ -846,6 +846,8 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
 
 #' Love plots with `designmatch`,`matchIt`,`Matching` Object
 #'
+#' ## Love plot with `designmatch` package object
+#'
 #' @param x A `designmatch`,`matchIt`,`Matching` Object
 #' @param data dataset before its preprocessed.
 #' @param covList a vector of covariates to be balanced.
@@ -855,36 +857,67 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
 #' @examples
 #' data("lalonde",package = "cobalt")
 #' attach(lalonde)
-#' # Treatment indicator
+#'
+#' ## Treatment indicator
 #' t_ind =lalonde$treat
-#' # Distance matrix
+#'
+#' ## Distance matrix
 #' dist_mat = NULL
-#' # Subset matching weight
+#'
+#' ## Subset matching weight.
 #' subset_weight = 1
+#'
 #' # Moment balance: constrain differences in means to be at most .05 standard deviations apart
 #' mom_covs = cbind(age, educ, black, hispan, married, nodegree, re74, re75)
 #' mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
 #' mom = list(covs = mom_covs, tols = mom_tols)
-#' # Fine balance
+#'
+#' ## Fine balance
 #' fine_covs = cbind(black, hispan, married, nodegree)
 #' fine = list(covs = fine_covs)
-#' # Exact matching
+#'
+#' ## Exact matching
 #' exact_covs = cbind(black)
 #' exact = list(covs = exact_covs)
-#' # Solver options
+#'
+#' ## Solver options
 #' t_max = 60*5
 #' solver = "glpk"
 #' approximate = 1
 #' solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
-#' # Match
+#'
+#' ## Cardinality matching
 #' out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight, mom = mom, fine = fine, exact = exact, solver = solver)
+#'
 #' # Indices of the treated units and matched controls
 #' t_id = out$t_id
 #' c_id = out$c_id
 #' detach(lalonde)
+#'
 #' # Example of cardinality Matching
-#' lovePlot1 = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+#' love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+#' # Example of MatchIt
+#' # data("lalonde") if not yet loaded
+#' covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
 
+#' # Nearest neighbor 1:1 matching with replacement
+#' library("MatchIt") #if not yet loaded
+#' m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE)
+
+#' love_plot(X =m.out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+#'
+#' # Example for for Matching
+#' library("Matching")
+#' #data("lalonde") #If not yet loaded
+#' covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
+
+#' fit <- glm(f.build("treat", covs0), data = lalonde, family = "binomial")
+#' p.score <- fit$fitted.values
+#' match.out <- Match(Tr = lalonde$treat, X = p.score, estimand = "ATT")
+
+#' std_dif_data =bal.tab(match.out, formula = f.build("treat", covs0), data = lalonde)
+
+#' love_plot(X, data = lalonde , covList=c("age", "educ", "black", "hispan", "re74", "re75"),treat = "treat")
 
 love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 {
