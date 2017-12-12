@@ -105,13 +105,71 @@ k$RUBIN3
 
 ## Love Plot
 
-Although Love plot for assessing standardized balance measure for objects produced by `Matching ` and `MatchIT` has already been implemented in `Cobalt` package through the Love.plot function, this function cannot interact with `designmatch` object directly. On the other hand the love plot object currently implemented in  `designmatch` package is not a `ggplot` objects and therefore makes it hard to customize as desired. The Love plot function in this package allows you to generate ggplot Love figures using objects from any of the three matching packages including `designmatch` package.  
+Although Love plot for assessing standardized balance measure for objects produced by `Matching ` and `MatchIt` has already been implemented in `Cobalt` package through the Love.plot function, this function cannot interact with `designmatch` object directly. On the other hand the love plot object currently implemented in  `designmatch` package is not a `ggplot` objects and therefore makes it hard to customize as desired. The Love plot function in this package allows you to generate ggplot Love figures using objects from any of the three matching packages including `designmatch` package.  
 
 The code chunk below shows how to accomplish this.
 
 ### Using `designmatch` objects 
 
+This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size. To implement cardinality matchng (using the lalonde data), the following code can be be executed
 
+```{r cardinalityMatch}
+
+data("lalonde",package = "cobalt")
+attach(lalonde)
+
+## Treatment indicator
+t_ind =lalonde$treat
+
+## Distance matrix
+dist_mat = NULL
+
+## Subset matching weight.
+subset_weight = 1
+
+# Moment balance: constrain differences in means to be at most .05 standard deviations apart
+mom_covs = cbind(age, educ, black, hispan, married, nodegree, re74, re75)
+mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+
+## Fine balance
+fine_covs = cbind(black, hispan, married, nodegree)
+fine = list(covs = fine_covs)
+
+## Exact matching
+exact_covs = cbind(black)
+exact = list(covs = exact_covs)
+
+## Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+
+## Cardinality matching
+out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight, mom = mom, fine = fine, exact = exact, solver = solver)
+
+# Indices of the treated units and matched controls
+t_id = out$t_id
+c_id = out$c_id
+detach(lalonde)
+
+```
+
+To assesse balance with `love_plot`function in this package you would need to execute the following code
+
+```{r LoveplotDesignMatch}
+p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+
+p
+```
+
+This plot can be enhanced using `ggplot2` features. For example we can add disired standardized difference treshholds of , say , -0.1 to 0.1 
+
+```{r modifyLoveplotDesignMatch}
+p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1)
+
+```
 
 ### Using `MatchIt` or `Matching` objects
 
