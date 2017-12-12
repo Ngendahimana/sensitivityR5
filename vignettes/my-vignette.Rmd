@@ -88,13 +88,39 @@ k$plot
 
 ```
 
-The first two Rubin balance meausures are displayed at the top of the plot while the third balance measure which consists of series of residual variance ratios for variable are displayed inside the dot plot. The blue lines indicate acceptable range for the residual variance ratios. Ratio outside region bounded by the red lines are considered unacceptable. This plot is a `ggplot` object and therefore can be modified using `ggplot` options. For example to modify the plot title and background, the following code could be executed:
+The first two Rubin balance meausures are displayed at the top of the plot while the third balance measure which consists of series of residual variance ratios for variable are displayed inside the dot plot. The blue lines indicate acceptable range for the residual variance ratios. Ratio outside region bounded by the red lines are considered unacceptable. This plot is a `ggplot` object and can be modified like any `ggplot` graph. For example to modify the plot title and background, the following code could be executed:
 
 
+```{r modifyrubinRules,fig.width = 7.5, fig.asp =1,message=FALSE,warning=FALSE}
+k$plot+theme_bw()+labs(title = "Assessing Rubin (2010) Balance Measures")
+```
 
-To obtain the actual numerical values , various items can be called off of the list (k) using conventional R methods. For example to obtain the numerical values for the thired rubin guideline the following line of code can be executed:
+Various items can be called off of the list (k) using conventional R methods. For example to obtain a dataset of residual variance ratio , you can do the following.
 
 ```{r individualRubinComponents}
 k$RUBIN3
 
 ```
+
+
+## Love Plot
+
+Although Love plot for assessing standardized balance measure for objects produced by `Matching ` and `MatchIT` has already been implemented in `Cobalt` package through the Love.plot function, this function cannot interact with `designmatch` object directly. On the other hand the love plot object currently implemented in  `designmatch` package is not a `ggplot` objects and therefore makes it hard to customize as desired. The Love plot function in this package allows you to generate ggplot Love figures using objects from any of the three matching packages including `designmatch` package.  
+
+The code chunk below shows how to accomplish this.
+
+### Using `designmatch` objects 
+
+
+
+### Using `MatchIt` or `Matching` objects
+
+
+
+
+
+
+
+
+
+

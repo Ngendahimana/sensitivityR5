@@ -841,3 +841,135 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
   #class(Obj) <- c("rbounds", class(Obj))
   return(Obj)
 }
+
+
+
+#' Love plots with `designmatch`,`matchIt`,`Matching` Object
+#'
+#' @param x A `designmatch`,`matchIt`,`Matching` Object
+#' @param data dataset before its preprocessed.
+#' @param covList a vector of covariates to be balanced.
+#' @param treat Exposure variable name
+#' @return a plot of standardized difference.
+#'
+#' @examples
+#' data("lalonde",package = "cobalt")
+#' attach(lalonde)
+#' # Treatment indicator
+#' t_ind =lalonde$treat
+#' # Distance matrix
+#' dist_mat = NULL
+#' # Subset matching weight
+#' subset_weight = 1
+#' # Moment balance: constrain differences in means to be at most .05 standard deviations apart
+#' mom_covs = cbind(age, educ, black, hispan, married, nodegree, re74, re75)
+#' mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+#' mom = list(covs = mom_covs, tols = mom_tols)
+#' # Fine balance
+#' fine_covs = cbind(black, hispan, married, nodegree)
+#' fine = list(covs = fine_covs)
+#' # Exact matching
+#' exact_covs = cbind(black)
+#' exact = list(covs = exact_covs)
+#' # Solver options
+#' t_max = 60*5
+#' solver = "glpk"
+#' approximate = 1
+#' solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+#' # Match
+#' out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight, mom = mom, fine = fine, exact = exact, solver = solver)
+#' # Indices of the treated units and matched controls
+#' t_id = out$t_id
+#' c_id = out$c_id
+#' detach(lalonde)
+#' # Example of cardinality Matching
+#' lovePlot1 = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+
+
+love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
+{
+  if (class(X) =="list"){
+
+    if (missing(data)|missing(covList)){
+
+      stop("Data or list of covariate need to be specified")
+    }
+
+    else {
+
+      attach(data)
+      X_mat = as.matrix(data[,covList])
+      detach(data)
+
+      X_mat_t = X_mat[X$t_id, ] # Extract treated observations
+      X_mat_c_before = X_mat[-X$t_id, ] # Extract control observations before matching
+      X_mat_c_before_mean = apply(X_mat_c_before, 2, mean) # Extract control variable means before matching
+      X_mat_t_mean = apply(X_mat_t, 2, mean) # extract mean of treated observations
+      X_mat_t_var = apply(X_mat_t, 2, var) # extract variance of treated observations
+      X_mat_c_before_var = apply(X_mat_c_before, 2, var) # Extract variance before matching for control obserations
+      std_dif_before = (X_mat_t_mean - X_mat_c_before_mean)/sqrt((X_mat_t_var + X_mat_c_before_var)/2) # std_df before matching
+
+
+      X_mat_c_after = X_mat[X$c_id, ] # extract matched observations
+      X_mat_c_after_mean = apply(X_mat_c_after, 2, mean) # extract variable mean for treated observations after matching
+      std_dif_after = (X_mat_t_mean - X_mat_c_after_mean)/sqrt((X_mat_t_var +  X_mat_c_before_var)/2) # Compute std_diff after matching
+
+      abs_std_dif_before = data.frame(std_dif_before)
+      abs_std_dif_before$VarName =rownames(abs_std_dif_before)
+      #abs_std_dif_before$Match = "Before Matching"
+      rownames(abs_std_dif_before) = NULL
+      names(abs_std_dif_before)[1] = "abs_std_before"
+
+      abs_std_dif_after = data.frame(std_dif_after)
+      abs_std_dif_after$VarName =rownames(abs_std_dif_after)
+      #abs_std_dif_after$Match = "After Matching"
+      rownames(abs_std_dif_after) = NULL
+      names(abs_std_dif_after)[1] = "abs_std_after"
+
+      std_dif_dat2 = dplyr::left_join(abs_std_dif_before,abs_std_dif_after,by = c("VarName"))
+
+    }
+  }
+
+  else if (class(X) =="matchit"){
+
+    std_dif_dat = bal.tab(X)$Balance[,c("Diff.Un","Diff.Adj")][-1,]
+    std_dif_dat$VarName =rownames(std_dif_dat)
+    rownames(std_dif_dat) = NULL
+    std_dif_dat2 = std_dif_dat
+    names(std_dif_dat2) = c("abs_std_before","abs_std_after","VarName")
+
+  }
+
+  else if(class(X) =="Match"){
+
+    if(missing(treat)|missing(data)){
+      stop(" Treatment Variable or Data not specified")
+    }
+    else{
+
+      #bal.tab(X, formula = f.build("treat", covList), data = data)
+      std_dif_dat =bal.tab(X, formula = f.build(treat, covList), data = data)$Balance[,c("Diff.Un","Diff.Adj")][-1,]
+      std_dif_dat$VarName =rownames(std_dif_dat)
+      rownames(std_dif_dat) = NULL
+      std_dif_dat2 = std_dif_dat
+      names(std_dif_dat2) = c("abs_std_before","abs_std_after","VarName")
+
+    }
+  }
+
+  else{
+
+    stop("Object has to be MatchIt, Matching or designMatch object")
+
+  }
+
+
+  ggplot(std_dif_dat2, aes(x = value, y = VarName, color = Variables)) +
+    geom_point(aes(x = abs_std_before, col = "Before Matching")) +
+    geom_point(aes(x = abs_std_after, col = "After Matching"))+ theme(legend.title = element_blank())
+
+
+}
+
+
