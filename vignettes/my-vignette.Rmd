@@ -115,7 +115,7 @@ The code chunk below shows how to accomplish this.
 
 This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size. To implement cardinality matchng (using the lalonde data), the following code can be be executed
 
-```{r cardinalityMatch}
+```{r cardinalityMatch,echo=FALSE}
 
 data("lalonde",package = "cobalt")
 attach(lalonde)
