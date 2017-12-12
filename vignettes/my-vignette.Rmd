@@ -78,7 +78,7 @@ devtools::install_github("Ngendahimana/SensitivityR5")
 
 An example of how to use the `rubinRules` function to assess these guidelines is illustrated below
 
-```{r rubinRules,fig.width = 7.5, fig.asp =1,message=FALSE,warning=FALSE}
+```{r rubinRules,fig.width = 5, fig.asp =1,message=FALSE,warning=FALSE}
 
 data(toy)
 psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
@@ -93,7 +93,7 @@ k$plot
 The first two Rubin balance meausures are displayed at the top of the plot while the third balance measure which consists of series of residual variance ratios for variable are displayed inside the dot plot. The blue lines indicate acceptable range for the residual variance ratios. Ratio outside region bounded by the red lines are considered unacceptable. This plot is a `ggplot` object and can be modified like any `ggplot` graph. For example to modify the plot title and background, the following code could be executed:
 
 
-```{r modifyrubinRules,fig.width = 7.5, fig.asp =1,message=FALSE,warning=FALSE}
+```{r modifyrubinRules,fig.width = 5, fig.asp =1,message=FALSE,warning=FALSE}
 k$plot+theme_bw()+labs(title = "Assessing Rubin (2010) Balance Measures")
 ```
 
@@ -160,7 +160,7 @@ detach(lalonde)
 
 To assesse balance with `love_plot`function in this package you would need to execute the following code
 
-```{r LoveplotDesignMatch}
+```{r LoveplotDesignMatch,fig.width=5,fig.asp=1}
 p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
 
 p
@@ -168,7 +168,7 @@ p
 
 This plot can be enhanced using `ggplot2` features. For example we can add disired standardized difference treshholds of , say , -0.1 to 0.1 
 
-```{r modifyLoveplotDesignMatch}
+```{r modifyLoveplotDesignMatch,fig.width=5,fig.asp=1}
 p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1)
 
 ```
