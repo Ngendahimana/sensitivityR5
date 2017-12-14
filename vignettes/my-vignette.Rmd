@@ -206,7 +206,7 @@ sens.out =pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
 
 ```
 
-Note that when using `MatchIt` objects you have to specify the effect estimate or put -1 if there a negative effect estimate and 1 otherwise. After executing this code, you can access a table of sensitivity parameters and their respective Rosenbaum bounds by running the code below:
+Note that when using `MatchIt` objects you have to specify the effect estimate or put -1 if there a negative effect estimate and 1 otherwise. After executing this code, you can access a table of sensitivity parameters and their respective Rosenbaum bounds by running the code below:.
 
 ```{r gammabounds}
 sens.out$bounds
