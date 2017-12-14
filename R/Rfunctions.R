@@ -672,7 +672,7 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
   pval <- pvals[1, 1]
   bounds <- data.frame(gamma, pvals)
   names(bounds) <- c("Gamma", "Lower bound", "Upper bound")
-  #msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
+  msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
   Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
               msg = msg, bounds = bounds, note = note)
