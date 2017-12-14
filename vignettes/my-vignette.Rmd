@@ -82,7 +82,7 @@ An example of how to use the `rubinRules` function to assess these guidelines is
 
 ```{r rubinRules,fig.width = 5, fig.asp =1,message=FALSE,warning=FALSE}
 
-library(SensitivityR5)
+library(SensitivityR5);library(tidyr)
 
 data("toy",package = "SensitivityR5")
 psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
