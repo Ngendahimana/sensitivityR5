@@ -1034,7 +1034,7 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
     #assign((paste0("c",i)),data1[as.vector(m.out$match.matrix[,i]),treat])
   }
   data2 = as.data.frame(cbind(treat,do.call(cbind, k,n_contrl)))
-  names(dat2) = c("Treated","Control 1","Control 2")
+  names(data2) = c("Treated","Control 1","Control 2")
   results4$data = data2
 
   gma = NULL
