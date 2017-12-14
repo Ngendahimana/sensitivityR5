@@ -257,5 +257,17 @@ sens2$bounds
 detach(lalonde)
 ```
 
+## `MultiControlSens` function
+
+Currently `sensitivitymw` is the only package that implements sensitivity analysis for in matched sampling designs that allow matched sets rather than simply matched pair. The `MultiControlSens` complements the `sensitivitymw` package by processing objects from various matching packages to allow seamless interactions during sensitivity analysis. For example, using the `lalonde` data , if we match 2 controls to 1 treated using the `optimal` option in `matchit` function , we can perform sensititivity analysis using the following code:
+
+```{r multSens}
+
+data("lalonde",package ="MatchIt")
+m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
+multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+
+```
+
 
 
