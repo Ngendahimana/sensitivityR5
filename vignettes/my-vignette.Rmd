@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching)
+library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr)
 ```
 
 
@@ -265,7 +265,14 @@ Currently `sensitivitymw` is the only package that implements sensitivity analys
 
 data("lalonde",package ="MatchIt")
 m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
-multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+res1 = multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+
+```
+
+This function returns Rosenbaum sensitivity bounds and a rearranged dataset. The first few rows of the data returned by the function are shown below
+
+```{r multiContrsENS,warning=FALSE}
+kable(head(res1$data,5))
 
 ```
 

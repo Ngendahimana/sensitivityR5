@@ -1046,7 +1046,7 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
   names(sensData) = c("Gamma","pval Upper Bound")
 
   results4$pvalues = sensData
-  return(results4)
+  #return(results4)
 }
 
 
