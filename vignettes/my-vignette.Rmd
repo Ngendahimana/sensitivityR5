@@ -160,7 +160,7 @@ detach(lalonde)
 
 To assess balance with `love_plot` function in this package after cardinality matching you would need to execute the following code
 
-```{r LoveplotDesignMatch,fig.width=6,fig.asp=1.5,message=FALSE,warning=FALSE}
+```{r LoveplotDesignMatch,fig.height=6,fig.asp=1.5,message=FALSE,warning=FALSE}
 p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
 
 p

@@ -1007,4 +1007,47 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 
 }
 
+#' Sensitivity Analysis with multiple controls
+#'
+#' @param X A `MatchIt` object
+#' @param outcomeName Name of the outcome.
+#' @param Gamma Upper bound of sensitivity parameter
+#' @param GammaInc Interval width of sequence between 1 and Gamma.
+#' @param n_contrl Number of control matched to each treated observation
+#'
+#'
+#' @examples
+
+#' data("lalonde",package ="MatchIt")
+#' m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
+#'  multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+
+
+  multiControlSens = function(X,outcomeName,Gamma,GammaInc,n_contrl){
+  results4 = list()
+  data1 = get_matches(m.out,model_frame = m.out$model$data)
+  treat = data1[which(row.names(data1) %in% rownames(m.out$match.matrix)),][,outcomeName]
+  k = list()
+  for(i in 1:dim(m.out$match.matrix)[2]){
+    k[[i]] = data1[as.vector(m.out$match.matrix[,i]),outcomeName]
+    #assign((paste0("c",i)),data1[as.vector(m.out$match.matrix[,i]),treat])
+  }
+  data2 = as.data.frame(cbind(treat,do.call(cbind, k,n_contrl)))
+  names(dat2) = c("Treated","Control 1","Control 2")
+  results4$data = data2
+
+  gma = NULL
+  for(i in seq(1,Gamma,by=GammaInc )){
+    gma[i]=senmw(data2, gamma = i, method = "t")$pval
+  }
+
+  sensData = data.frame(cbind(seq(1,Gamma,by=GammaInc ),round(gma,2)))
+  names(sensData) = c("Gamma","pval Upper Bound")
+
+  results4$pvalues = sensData
+  return(results4)
+}
+
+
+
 
