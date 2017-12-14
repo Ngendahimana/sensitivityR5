@@ -853,6 +853,7 @@ binarysens2 = function (x, y = NULL, Gamma = 6, GammaInc = 1,data =NULL,treat =N
 #' @param covList a vector of covariates to be balanced.
 #' @param treat Exposure variable name
 #' @return a plot of standardized difference.
+#' @export
 #'
 #' @examples
 #' data("lalonde",package = "cobalt")
@@ -1014,7 +1015,7 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 #' @param Gamma Upper bound of sensitivity parameter
 #' @param GammaInc Interval width of sequence between 1 and Gamma.
 #' @param n_contrl Number of control matched to each treated observation
-#'
+#' @export
 #'
 #' @examples
 
