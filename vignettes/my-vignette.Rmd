@@ -60,9 +60,12 @@ This package contains four main functions `rubinrules()`, `pens2()`, `binarysens
 
 Currently this package is housed on github therefore to install it use the following code:
 
-```{r packageinstall,message=FALSE}
 
+
+```{r packageinstall,message=FALSE}
+library(devtools)
 devtools::install_github("Ngendahimana/SensitivityR5")
+library(SensitivityR5)
 
 ```
 
