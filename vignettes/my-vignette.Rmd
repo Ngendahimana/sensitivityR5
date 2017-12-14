@@ -276,5 +276,9 @@ kable(head(res1$data,5))
 
 ```
 
+Rosenbaum bounds can also be exctracted 
 
+```{r pvalueMultiplecontrl}
+kable(res1$`pval Upper Bound`)
+```
 
