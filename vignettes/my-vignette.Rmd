@@ -178,10 +178,39 @@ p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(
 
 Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package. 
 
+## Sensitivity Analysis.
 
+As mentioned earlier, one of the aims of this package is to facilitate seamless transition between analysis of an observational study to perfoming sensitivity analysis. In the section that follow we illustrate how to use functions within this package to accomplish this task.
 
+### `pens2` Function.
+This function is meant to facilitate sensitivity analysis for continous outcomes. There is  a similar function in `rbounds` package that implements this method howevever rbounds interacts only with `Matching` package objects which impliments limited methods of matched sampling.
 
+#### Working with `MatctchIt` package.
 
+Using `lalonde` dataset , the code below illustrates how to do sensitivity analysis after implementing an optimal matching algorithm
+
+```{r withMatchIt}
+
+library(Matching);library(MatchIt)
+data("lalonde",package = "Matching")
+
+## Sensitivity analysis with a matchit object
+m.out = matchit(treat ~ age  + educ +  black + hisp +married + nodegr + re74  + re75  +
+u74 + u75, family=binomial, data = lalonde, method = "optimal")
+
+## Estimating treatment effect. Ideally, balance assessement should be done prior to estimating treatment effect
+mod = lm(re78~age  + educ +  black + hisp +married + nodegr + re74  + re75  +u74 + u75,data = match.data(m.out))
+
+## Sensitivity analysis
+sens.out =pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
+
+```
+
+Note that when using `MatchIt` objects you have to specify the effect estimate or put -1 if there a negative effect estimate and 1 otherwise. After executing this code, you can access a table of sensitivity parameters and their respective Rosenbaum bounds by running the code below:
+
+```{r gammabounds}
+sens.out$bounds
+```
 
 
 
