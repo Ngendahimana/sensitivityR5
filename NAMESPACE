@@ -2,7 +2,6 @@
 
 export(Survsens)
 export(ampPlot)
-export(binarysens2)
 export(edaTable)
 export(love_plot)
 export(multiControlSens)
