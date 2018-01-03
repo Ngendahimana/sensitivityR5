@@ -429,7 +429,6 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
 #' @param alpha p-value to define maximum upper bound allowable
 #' @export
 #' @return a table of Rosenbaum bounds
-#'
 #' @examples
 #'
 #' ## Sensitivity analysis with a matchit object
