@@ -122,7 +122,7 @@ This example uses to design match which implements cardinality matching which ba
 ```{r cardinalityMatch,echo=FALSE,warning=FALSE,message=FALSE}
 
 data("lalonde",package = "cobalt")
-attach(lalonde)
+#attach(lalonde)
 
 ## Treatment indicator
 t_ind =lalonde$treat
@@ -158,7 +158,7 @@ out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight, 
 # Indices of the treated units and matched controls
 t_id = out$t_id
 c_id = out$c_id
-detach(lalonde)
+#detach(lalonde)
 
 ```
 
