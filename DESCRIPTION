@@ -18,7 +18,8 @@ Suggests:
     tidyr,
     designmatch,
     knitr,
-    rmarkdown
+    rmarkdown,
+    VignetteBuilder
 License: what license?
 LazyData: TRUE
 RoxygenNote: 5.0.1
