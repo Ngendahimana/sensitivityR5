@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt)
+library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt);library(designmatch)
 ```
 
 
@@ -118,3 +118,167 @@ The code chunk below shows how to accomplish this.
 ### Using `designmatch` objects 
 
 This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score.
+
+```{r cardinalityMatch,echo=FALSE,warning=FALSE,message=FALSE,eval=FALSE}
+
+data("lalonde",package = "cobalt")
+attach(lalonde)
+
+## Treatment indicator
+t_ind =lalonde$treat
+
+## Distance matrix
+dist_mat = NULL
+
+## Subset matching weight.
+subset_weight = 1 
+
+# Moment balance: constrain differences in means to be at most .05 standard deviations apart
+mom_covs = cbind(age,educ,black,hispan,married,nodegree,re74,re75)
+mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+
+## Fine balance
+#fine_covs = cbind(black, hispan, married, nodegree)
+#fine = list(covs = fine_covs)
+
+## Exact matching
+#exact_covs = cbind(black)
+#exact = list(covs = exact_covs)
+
+## Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+
+## Cardinality matching
+out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight, mom = mom,  solver = solver)
+
+# Indices of the treated units and matched controls
+t_id = out$t_id
+c_id = out$c_id
+#detach(lalonde)
+
+```
+
+To assess balance with `love_plot` function in this package after cardinality matching you would need to execute the following code
+
+```{r LoveplotDesignMatch,fig.width=6,fig.asp=1,message=FALSE,warning=FALSE,eval=FALSE}
+p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+
+p
+```
+
+Note that `out` is an object from the `designmatch` package that implements cardinality matching.
+
+This plot can be enhanced using `ggplot2` features. For example we can add desired standardized difference threshhold lines  , say,  from -0.1 to 0.1 and remove the legend title with the following code: 
+
+```{r modifyLoveplotDesignMatch,fig.width=6,fig.asp=1,warning=FALSE,message=FALSE,eval=FALSE}
+p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(legend.title = element_blank())
+
+```
+
+
+Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package. 
+
+## Sensitivity Analysis.
+
+As mentioned earlier, one of the aims of this package is to facilitate seamless transition between analysis of an observational study to perfoming sensitivity analysis. In the section that follow we illustrate how to use functions within this package to accomplish this task.
+
+### `pens2` Function.
+This function is meant to facilitate sensitivity analysis for continous outcomes. There is  a similar function in `rbounds` package that implements this method howevever rbounds interacts only with `Matching` package objects which impliments limited methods of matched sampling.
+
+Using `lalonde` dataset , the code below illustrates how to do sensitivity analysis after implementing an optimal matching algorithm
+
+```{r withMatchIt}
+
+library(Matching);library(MatchIt)
+data("lalonde",package = "Matching")
+
+## Sensitivity analysis with a matchit object
+m.out = matchit(treat ~ age  + educ +  black + hisp +married + nodegr + re74  + re75  +
+u74 + u75, family=binomial, data = lalonde, method = "optimal")
+
+## Estimating treatment effect. Ideally, balance assessement should be done prior to estimating treatment effect
+mod = lm(re78~age  + educ +  black + hisp +married + nodegr + re74  + re75  +u74 + u75,data = match.data(m.out))
+
+## Sensitivity analysis
+sens.out =pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
+
+```
+
+Note that when using `MatchIt` objects you have to specify the effect estimate or put -1 if there a negative effect estimate and 1 otherwise. After executing this code, you can access a table of sensitivity parameters and their respective Rosenbaum bounds by running the code below:.
+
+```{r gammabounds}
+kable(sens.out$bounds)
+```
+
+The other advantage of using this package is that it allows you to used objects processed by `designmatch` package to run sensitivity analysis. This especially important when one wants to implemented more sophisticated matching methods that are not available with either `MatchtIt` or `Matching` package such allowing for near fine matching or fine matching. For example to run a sensitivity analysis using the design match object `out` created earlier on and obtain Rosenbaum sensitivity bounds, the following code would be used:
+
+```{r designCont,echo=FALSE,message=FALSE,warning=FALSE}
+data("lalonde",package = "designmatch")
+attach(lalonde)
+## Treatment indicator
+t_ind = treatment
+## Distance matrix
+dist_mat = NULL
+## Subset matching weight
+subset_weight = 1
+## Moment balance: constrain differences in means to be at most .05 standard deviations apart
+mom_covs = cbind(age, education, black, hispanic, married, nodegree, re74, re75)
+mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+## Fine balance
+fine_covs = cbind(black, hispanic, married, nodegree)
+fine = list(covs = fine_covs)
+## Exact matching
+exact_covs = cbind(black)
+exact = list(covs = exact_covs)
+## Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+## Match
+out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom, fine = fine, exact = exact, solver = solver)
+```
+
+
+
+```{r sensitiivtyCard}
+sens2 = pens2(x = out, y="re78",Gamma = 2, GammaInc = 0.1,est = 234,treat = "treatment",data = lalonde)
+kable(sens2$bounds)
+```
+
+
+```{r removeLalonde01,echo=FALSE}
+detach(lalonde)
+```
+
+## `MultiControlSens` function
+
+Currently `sensitivitymw` is the only package that implements sensitivity analysis for in matched sampling designs that allow matched sets rather than simply matched pair. The `MultiControlSens` complements the `sensitivitymw` package by processing objects from various matching packages to allow seamless interactions during sensitivity analysis. For example, using the `lalonde` data , if we match 2 controls to 1 treated using the `optimal` option in `matchit` function , we can perform sensititivity analysis using the following code:
+
+```{r multSens}
+
+data("lalonde",package ="MatchIt")
+covs0 = c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75")
+m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
+res1 = multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+
+```
+
+This function returns Rosenbaum sensitivity bounds and a rearranged dataset. The first few rows of the data returned by the function are shown below
+
+```{r multiContrsENS,warning=FALSE}
+kable(head(res1$data,5))
+
+```
+
+Rosenbaum bounds can also be exctracted 
+
+```{r pvalueMultiplecontrl}
+res1$`pval Upper Bound`
+```
+
