@@ -131,7 +131,7 @@ t_ind =lalonde$treat
 dist_mat = NULL
 
 ## Subset matching weight.
-subset_weight = 1
+subset_weight = 1 
 
 # Moment balance: constrain differences in means to be at most .05 standard deviations apart
 mom_covs = lalonde[,c("age", "educ", "black" ,"hispan", "married", "nodegree", "re74", "re75")]
