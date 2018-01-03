@@ -119,9 +119,9 @@ The code chunk below shows how to accomplish this.
 
 This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score.
 
-```{r cardinalityMatch,echo=FALSE,warning=FALSE,message=FALSE,eval=FALSE}
+```{r cardinalityMatch,warning=FALSE,message=FALSE}
 
-data("lalonde",package = "cobalt")
+data("lalonde",package = "designmatch")
 attach(lalonde)
 
 ## Treatment indicator
@@ -134,7 +134,7 @@ dist_mat = NULL
 subset_weight = 1 
 
 # Moment balance: constrain differences in means to be at most .05 standard deviations apart
-mom_covs = cbind(age,educ,black,hispan,married,nodegree,re74,re75)
+mom_covs = cbind(age, education, black, hispanic, married, nodegree, re74, re75)
 mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
 mom = list(covs = mom_covs, tols = mom_tols)
 
@@ -161,6 +161,11 @@ c_id = out$c_id
 #detach(lalonde)
 
 ```
+
+```{r removelaldonde_01, echo=FALSE}
+detach(lalonde)
+```
+
 
 To assess balance with `love_plot` function in this package after cardinality matching you would need to execute the following code
 
@@ -216,7 +221,7 @@ kable(sens.out$bounds)
 
 The other advantage of using this package is that it allows you to used objects processed by `designmatch` package to run sensitivity analysis. This especially important when one wants to implemented more sophisticated matching methods that are not available with either `MatchtIt` or `Matching` package such allowing for near fine matching or fine matching. For example to run a sensitivity analysis using the design match object `out` created earlier on and obtain Rosenbaum sensitivity bounds, the following code would be used:
 
-```{r designCont,message=FALSE,warning=FALSE}
+```{r designCont,echo=FALSE,message=FALSE,warning=FALSE}
 data("lalonde",package = "designmatch")
 attach(lalonde)
 ## Treatment indicator
