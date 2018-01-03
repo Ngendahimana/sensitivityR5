@@ -123,7 +123,6 @@ This example uses to design match which implements cardinality matching which ba
 
 data("lalonde",package = "designmatch")
 attach(lalonde)
-
 ## Treatment indicator
 t_ind =lalonde$treat
 
@@ -170,7 +169,7 @@ detach(lalonde)
 To assess balance with `love_plot` function in this package after cardinality matching you would need to execute the following code
 
 ```{r LoveplotDesignMatch,fig.width=6,fig.asp=1,message=FALSE,warning=FALSE}
-p = love_plot(X =out, data = lalonde , covList=c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75"))
+p = love_plot(X =out, data = lalonde , covList=c("age", "education", "black", "hispanic", "married", "nodegree", "re74", "re75"))
 
 p
 ```
