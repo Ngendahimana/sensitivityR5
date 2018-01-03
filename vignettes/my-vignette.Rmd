@@ -233,7 +233,7 @@ mom = list(covs = mom_covs, tols = mom_tols)
 fine_covs = cbind(black, hispanic, married, nodegree)
 fine = list(covs = fine_covs)
 ## Exact matching
-exact_covs = cbind(black)
+exact_covs = cbind(black) 
 exact = list(covs = exact_covs)
 ## Solver options
 t_max = 60*5
