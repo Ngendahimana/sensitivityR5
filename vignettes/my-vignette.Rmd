@@ -264,6 +264,7 @@ Currently `sensitivitymw` is the only package that implements sensitivity analys
 ```{r multSens}
 
 data("lalonde",package ="MatchIt")
+covs0 = c("age", "educ", "black", "hispan", "married", "nodegree", "re74", "re75")
 m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
 res1 = multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
 
