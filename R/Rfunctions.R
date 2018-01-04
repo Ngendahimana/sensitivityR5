@@ -757,10 +757,10 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 
 #' data("lalonde",package ="MatchIt")
 #' m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
-#'  multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
+#' multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
 
 
-  multiControlSens = function(X,outcomeName,Gamma,GammaInc,n_contrl){
+multiControlSens = function(X,outcomeName,Gamma,GammaInc,n_contrl){
   results4 = list()
   data1 = get_matches(m.out,model_frame = m.out$model$data)
   treat = data1[which(row.names(data1) %in% rownames(m.out$match.matrix)),][,outcomeName]
@@ -775,14 +775,14 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 
   gma = NULL
   for(i in seq(1,Gamma,by=GammaInc )){
-    gma[i]=senmw(data2, gamma = i, method = "t")$pval
+    gma=append(gma,senmw(data2, gamma = i, method = "t")$pval)
   }
 
   sensData = data.frame(cbind(seq(1,Gamma,by=GammaInc ),round(gma,2)))
   names(sensData) = c("Gamma","pval Upper Bound")
 
   results4$pvalues = sensData
-  #return(results4)
+  return(results4)
 }
 
 
