@@ -283,6 +283,6 @@ kable(head(res1$data,5))
 Rosenbaum bounds can also be exctracted 
 
 ```{r pvalueMultiplecontrl}
-res1$`pval Upper Bound`
+res1$pvalues
 ```
 
