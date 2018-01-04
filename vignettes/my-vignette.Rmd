@@ -274,7 +274,7 @@ Tr <- as.logical(toy$treated)
 Y <- toy$out3.time
 match1 <- Match(Y=Y, Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
 
-match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
+match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1) 
 ```
 
 After assessing the quality of matches and estimating treatment effect, you can then do a sensitivity analysis with `SurvSens` function using the code similar to the one below to extract Rosenbaum bounds table.
