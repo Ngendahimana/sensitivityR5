@@ -133,41 +133,47 @@ ampPlot <- function(gamma, lambda) {
 
 #' @references Rosenbum 2011
 #'
-Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamma, alpha, Gammainterval, plot_title = NULL) {
+Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamma, alpha=0.05, Gammainterval, plot_title = NULL) {
 
-    results = list()
+  results = list()
 
-    if ((class(x) != "Match") & (class(x) != "matchit"))
-        {
-            trt <- x  # exposure failure times
-            ctrl <- y
-        }
- else if (class(x) == "Match") {
+  if ((class(x) != "Match") & (class(x) != "matchit") & (class(x) !="list"))
+  {
+    wonpairs <- x  # won pairs
+    expoutlive <- y
 
-        extractor = (c(x$index.treated, x$index.control))
-        group_id = c(c(1:length(x$index.treated)), c(1:length(x$index.control)))
-        data1s = data[extractor, c(exp, outcome, failtime)]
-        data1s$match33 = group_id
+    results$wonpairs = x
+    results$expoutlive = y
+  }
+
+  else{
+
+    if (class(x) == "Match") {
+
+      extractor = (c(x$index.treated, x$index.control))
+      group_id = c(c(1:length(x$index.treated)), c(1:length(x$index.control)))
+      data1s = data[extractor, c(exp, outcome, failtime)]
+      data1s$match33 = group_id
 
 
     } else if (class(x) == "matchit") {
 
-        # data$rId = row.names(data) data2 = data[, c('rId', exp)] data2$rId = row.names(data2) names(data2)[2] = 'exp'
-        t_id = rownames(x$match.matrix)
-        c_id = x$match.matrix
-        extractor = as.numeric(c(t_id, c_id))
-        data1s = x$model$data[extractor, c(exp, outcome, failtime)]
+      # data$rId = row.names(data) data2 = data[, c('rId', exp)] data2$rId = row.names(data2) names(data2)[2] = 'exp'
+      t_id = rownames(x$match.matrix)
+      c_id = x$match.matrix
+      extractor = as.numeric(c(t_id, c_id))
+      data1s = x$model$data[extractor, c(exp, outcome, failtime)]
 
-        k2 = length(extractor)/2
-        match = rep(1:k2, 2)
-        data1s$match = match
+      k2 = length(extractor)/2
+      match = rep(1:k2, 2)
+      data1s$match = match
     } else {
-        t_id = x$t_id
-        c_id = x$c_id
-        extractor(t_id, c_id)
-        extractor = as.numeric(c(t_id, c_id))
-        data1s = data[extractor, c(exp, outcome, failtime)]
-        data1s$match = x$group_id
+      t_id = x$t_id
+      c_id = x$c_id
+      extractor(t_id, c_id)
+      extractor = as.numeric(c(t_id, c_id))
+      data1s = data[extractor, c(exp, outcome, failtime)]
+      data1s$match = x$group_id
     }
 
 
@@ -177,7 +183,7 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
     data3s = subset(data1s, exp == 1)
     data4s = subset(data2s, select = c("match", "exp", "outcome", "failtime"))
     data5s = subset(data3s, select = c("match", "exp", "outcome", "failtime"))
-    data6s = full_join(data4s, data5s, by = "match")
+    data6s = dplyr::full_join(data4s, data5s, by = "match")
 
     names(data6s)[c(3, 4, 6, 7)] = c("ExpOutcome", "failtimeNotexp", "NoExpOutcome", "failtimeExp")
     data6s$timediff = data6s$failtimeNotexp - data6s$failtimeExp
@@ -187,47 +193,49 @@ Survsens = function(x, y=NULL,data =NULL, exp=NULL, outcome=NULL, failtime, Gamm
     results$wonpairs = sum(data6s$timediff != 0)
     results$expoutlive = sum(data6s$timediff < 0)
 
-    gamVal = seq(1, Gamma, by = Gammainterval)
-    pminus = 1/(1 + gamVal)
-    pplus = gamVal/(1 + gamVal)
+  }
 
-    bounds = data.frame(cbind(gamVal, pplus, pminus))
-    bounds$expTplus = wonpairs * bounds$pplus
-    bounds$expTminus = wonpairs * bounds$pminus
-    bounds$sd_expT = sqrt(wonpairs * bounds$pplus * (1 - bounds$pplus))
+  ## Universal code
 
+  gamVal = seq(1, Gamma, by = Gammainterval)
+  pminus = 1/(1 + gamVal)
+  pplus = gamVal/(1 + gamVal)
 
-
-    for (i in 1:length(gamVal)) {
-        bounds$pupper[i] = round(min(1, 2 * pnorm((expoutlive - bounds[i, 5])/bounds[i, 6], lower.tail = FALSE)), 4)
-    }
-
-    for (i in 1:length(gamVal)) {
-        bounds$plower[i] = round(min(1, 2 * pnorm((expoutlive - bounds[i, 4])/bounds[i, 6], lower.tail = FALSE)), 4)
-    }
-
-    bounds2 = bounds[,c(1,8,7)]
-    names(bounds2)=c("Gamma","Lower bound"," Upper bound")
-    bounds1 = bounds
-
-    bounds1$min = abs(alpha - bounds1$pupper)
-    vrt = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
-    hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
-    vrt1 = round(bounds1[bounds1$min == min(bounds1$min), ]$gamVal, 2)
-    hrz1 = round(bounds1[bounds1$min == min(bounds1$min), ]$pupper, 2)
+  bounds = data.frame(cbind(gamVal, pplus, pminus))
+  bounds$expTplus = wonpairs * bounds$pplus
+  bounds$expTminus = wonpairs * bounds$pminus
+  bounds$sd_expT = sqrt(wonpairs * bounds$pplus * (1 - bounds$pplus))
 
 
-    plot = ggplot(data = bounds1, aes(x = gamVal, y = pupper)) + geom_line() + geom_point(aes(x = vrt, y = hrz)) + ylab("p upper bound") +
-        xlab("gamma (Bias)") + ylim(0, 0.06) + theme_bw() + annotate("text", x = vrt + 0.1 * vrt, y = hrz, label = paste0("(",
-        vrt1, ",", hrz1, ")")) + labs(title = plot_title, caption = paste("matching done by", class(x), "function")) + theme(plot.title = element_text(hjust = 0.5))
+  for (i in 1:length(gamVal)) {
+    bounds$pupper[i] = round(min(1, 2 * pnorm((expoutlive - bounds[i, 4])/bounds[i, 6], lower.tail = FALSE)), 4)
+  }
 
-    results$plot = plot
-    results$upperbound_pval = hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
-    results$Gamma = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
-    results$bounds = bounds2
+  for (i in 1:length(gamVal)) {
+    bounds$plower[i] = round(min(1, 2 * pnorm((expoutlive - bounds[i, 5])/bounds[i, 6], lower.tail = FALSE)), 4)
+  }
 
-    return(results)
+  bounds2 = bounds[,c(1,8,7)]
+  names(bounds2)=c("Gamma","Lower bound"," Upper bound")
+  bounds1 = bounds
 
+  bounds1$min = abs(alpha - bounds1$pupper)
+  vrt = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
+  hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
+  vrt1 = round(bounds1[bounds1$min == min(bounds1$min), ]$gamVal, 2)
+  hrz1 = round(bounds1[bounds1$min == min(bounds1$min), ]$pupper, 2)
+
+
+  plot = ggplot(data = bounds1, aes(x = gamVal, y = pupper)) + geom_line() + geom_point(aes(x = vrt, y = hrz)) + ylab("p upper bound") +
+    xlab("gamma (Bias)") + ylim(0, 0.06) + theme_bw() + annotate("text", x = vrt + 0.1 * vrt, y = hrz, label = paste0("(",
+                                                                                                                      vrt1, ",", hrz1, ")")) + labs(title = plot_title, caption = paste("matching done by", class(x), "function")) + theme(plot.title = element_text(hjust = 0.5))
+
+  results$plot = plot
+  results$upperbound_pval = hrz = bounds1[bounds1$min == min(bounds1$min), ]$pupper
+  results$Gamma = bounds1[bounds1$min == min(bounds1$min), ]$gamVal
+  results$bounds = bounds2
+
+  return(results)
 
 }
 
@@ -755,8 +763,8 @@ love_plot = function (X,data,covList, legend_position = "topright",treat=NULL)
 #'
 #' @examples
 
-#' data("lalonde",package ="MatchIt")
-#' m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
+#' data("lalonde",package ="designmatch")
+#' m.out <- matchit(f.build("treatment", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
 #' multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
 
 

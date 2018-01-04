@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt);library(designmatch)
+library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt);library(designmatch);library(dplyr)
 ```
 
 
@@ -117,7 +117,7 @@ The code chunk below shows how to accomplish this.
 
 ### Using `designmatch` objects 
 
-This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score.
+This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score. `designmatching`package also enables other more sophisticated matching algorithms such as fine, near-fine balancing, exact matching and near exact matching. These algoritms can be appealing in various circumstances, especially  when the researcher wishes to incorporate subject matter understanding of the question at hand.
 
 ```{r cardinalityMatch,warning=FALSE,message=FALSE}
 
@@ -176,24 +176,23 @@ p
 
 Note that `out` is an object from the `designmatch` package that implements cardinality matching.
 
-This plot can be enhanced using `ggplot2` features. For example we can add desired standardized difference threshhold lines  , say,  from -0.1 to 0.1 and remove the legend title with the following code: 
+unlike the existing love plot in `designmatch` which does not allow one to modify its appearence, this plot can be enhanced using `ggplot2` features. For example we can add desired standardized difference threshhold lines  , say,  from -0.1 to 0.1 and remove the legend title with the following code: 
 
 ```{r modifyLoveplotDesignMatch,fig.width=6,fig.asp=1,warning=FALSE,message=FALSE}
 p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(legend.title = element_blank())
 
 ```
 
-
-Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package. 
+Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package... 
 
 ## Sensitivity Analysis.
 
 As mentioned earlier, one of the aims of this package is to facilitate seamless transition between analysis of an observational study to perfoming sensitivity analysis. In the section that follow we illustrate how to use functions within this package to accomplish this task.
 
 ### `pens2` Function.
-This function is meant to facilitate sensitivity analysis for continous outcomes. There is  a similar function in `rbounds` package that implements this method howevever rbounds interacts only with `Matching` package objects which impliments limited methods of matched sampling.
+This function is meant to facilitate sensitivity analysis for continous outcomes. There is  a similar function in `rbounds` package that implements this method howevever `rbounds` interacts only with `Matching` package objects which implements limited methods of matched sampling.
 
-Using `lalonde` dataset , the code below illustrates how to do sensitivity analysis after implementing an optimal matching algorithm
+Using `lalonde` dataset , the code below illustrates how to do sensitivity analysis after implementing an optimal matching algorithm.
 
 ```{r withMatchIt}
 
@@ -260,6 +259,33 @@ kable(sens2$bounds)
 detach(lalonde)
 ```
 
+
+## `Survsens` function.
+
+At the time of writing this vignette there are no sensitivity package with a function that implements sensitivity analysis for time to event outcomes. `Survsens` performs this analysis and is largerly based on lecture notes provided by Prof.Thomas Love in his travelling course on design of observational studies. We illustrate how to use this function using made up data called `toy` that is part of this package. To run sensitivity analysis with this function, you first have to perfom matching using a matching package of your choice and assess quality of your match. For example we can first match using `MatchIt` package with the following code
+
+```{r survSens,warning=FALSE}
+data("toy",package = "SensitivityR5")
+psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
+toy$ps <- psmodel$fitted
+toy$linps <- psmodel$linear.predictors
+X <- toy$linps ## matching on the linear propensity score
+Tr <- as.logical(toy$treated)
+Y <- toy$out3.time
+match1 <- Match(Y=Y, Tr=Tr, X=X, M = 1, replace=FALSE, ties=FALSE)
+
+match.it <- matchit(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, data = toy, method='nearest', ratio=1)
+```
+
+After assessing the quality of matches and estimating treatment effect, you can then do a sensitivity analysis with `SurvSens` function using the code similar to the one below to extract Rosenbaum bounds table.
+
+
+```{r timetovenSens,warning=FALSE}
+res_Surv =Survsens(x= match.it,data =toy,exp='treated',outcome = 'out2',failtime = 'out3.time',Gamma=1.2,Gammainterval = 0.01,alpha ,plot_title = 'Time To Event Outcome Sensitivity Plot')
+
+kable(res_Surv$bounds)
+```
+
 ## `MultiControlSens` function
 
 Currently `sensitivitymw` is the only package that implements sensitivity analysis for in matched sampling designs that allow matched sets rather than simply matched pair. The `MultiControlSens` complements the `sensitivitymw` package by processing objects from various matching packages to allow seamless interactions during sensitivity analysis. For example, using the `lalonde` data , if we match 2 controls to 1 treated using the `optimal` option in `matchit` function , we can perform sensititivity analysis using the following code:
@@ -283,6 +309,11 @@ kable(head(res1$data,5))
 Rosenbaum bounds can also be exctracted 
 
 ```{r pvalueMultiplecontrl}
-res1$pvalues
+kable(res1$pvalues)
 ```
+
+From the table above we observe designing an observational study such that 2 control can be matched to a single case then the odds of occurence of an unobserved variable in one exposure group would have to 1.3 the odds of occurence in the other exposure group to nullify any qualitative findings of significance treatment difference between these exposure groups.
+
+
+
 

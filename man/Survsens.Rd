@@ -5,7 +5,7 @@
 \title{Sensitivity Test for Matched Time to Event Outcomes}
 \usage{
 Survsens(x, y = NULL, data = NULL, exp = NULL, outcome = NULL, failtime,
-  Gamma, alpha, Gammainterval, plot_title = NULL)
+  Gamma, alpha = 0.05, Gammainterval, plot_title = NULL)
 }
 \arguments{
 \item{x}{name of the matching object. Should be either a \code{Match} or \code{matchit} object.}

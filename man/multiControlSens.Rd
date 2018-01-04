@@ -21,8 +21,8 @@ multiControlSens(X, outcomeName, Gamma, GammaInc, n_contrl)
 Sensitivity Analysis with multiple controls
 }
 \examples{
-data("lalonde",package ="MatchIt")
-m.out <- matchit(f.build("treat", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
+data("lalonde",package ="designmatch")
+m.out <- matchit(f.build("treatment", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
 multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
 }
 
