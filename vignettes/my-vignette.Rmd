@@ -178,7 +178,7 @@ Note that `out` is an object from the `designmatch` package that implements card
 
 This plot can be enhanced using `ggplot2` features. For example we can add desired standardized difference threshhold lines  , say,  from -0.1 to 0.1 and remove the legend title with the following code: 
 
-```{r modifyLoveplotDesignMatch,fig.width=6,fig.asp=1,warning=FALSE,message=FALSE,eval=FALSE}
+```{r modifyLoveplotDesignMatch,fig.width=6,fig.asp=1,warning=FALSE,message=FALSE}
 p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(legend.title = element_blank())
 
 ```
