@@ -22,6 +22,7 @@ Sensitivity Analysis with multiple controls
 }
 \examples{
 data("lalonde",package ="designmatch")
+covs0 <- subset(lalonde, select = -c(treat, re78, nodegree, married))
 m.out <- matchit(f.build("treatment", covs0), data = lalonde, method = "nearest", replace = TRUE,ratio = 2)
 multiControlSens(X =m.out,outcomeName = "re78",Gamma = 2,GammaInc = 0.1,n_contrl = 2)
 }
