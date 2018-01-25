@@ -1,6 +1,6 @@
 ---
-title: "Vignette Title"
-author: "Vignette Author"
+title: " A Package to assess Rubin rules, perform sensitivity analysis using designmatch,Match and Matchit objects directly "
+author: "David N"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ```{r packages,include=FALSE,echo=FALSE}
 
-library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt);library(designmatch);library(dplyr)
+library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Matching);library(sensitivitymv);library(sensitivitymw);library(knitr);library(cobalt);library(dplyr)
 
 ```
 
