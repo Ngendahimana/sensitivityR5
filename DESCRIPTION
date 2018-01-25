@@ -4,7 +4,7 @@ Title: This package supports implementation of sensitivity analyisis using objec
 Version: 0.1
 Date: 2017-10-02
 Authors@R: person("David", "Ngendahimana", email = "dkn18@case.edu", role = c("aut", "cre"))
-Description: This package supports implementation of sensitivity analyisis using objects from Match, MatchIt and bmatch
+Description: This package supports  sensitivity analyisis using objects from Match, MatchIt and designmatch packages
 Imports:
     dplyr,
     ggplot2,
@@ -19,6 +19,8 @@ Suggests:
     designmatch,
     knitr,
     rmarkdown,
+    cobalt,
+    optmatch,
     VignetteBuilder
 License: what license?
 LazyData: TRUE
