@@ -322,5 +322,11 @@ kable(res1$pvalues)
 From the table above we observe designing an observational study such that 2 control can be matched to a single case then the odds of occurence of an unobserved variable in one exposure group would have to 1.3 the odds of occurence in the other exposure group to nullify any qualitative findings of significance treatment difference between these exposure groups.
 
 
+## `binarysens2` function.
+
+The `rbounds`package has implimented method developed by Rosenbaum for binary outcomes sensitivity analyis using the `binarysens` function. In fact , `binarysens2` gets most of its coding inspiration from `binarysens2`. What this function adds on is the ability to do sensitivity analysis using other algorithms that `binarysens`is currently unable to intaract with. In the sections that follow we illustrate how to use `binarysens2` with objects from various packages.
+
+### Using `matchIt` objects.
+
 
 
