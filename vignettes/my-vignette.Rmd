@@ -329,7 +329,7 @@ The `rbounds`package has implimented method developed by Rosenbaum for binary ou
 ### Using `matchIt` objects.
 
 ```{r, binsens}
-
+data("GerberGreenImai",package = "Matching")
 ## Sensitivity analysis with a Match object
 m.out = matchit(PHN.C1 ~ PERSONS + VOTE96.1 + NEW +MAJORPTY + AGE + WARD , family=binomial, data = GerberGreenImai, method = "nearest")
 mod = lm(VOTED98 ~ PHN.C1+PERSONS + VOTE96.1 + NEW +MAJORPTY + AGE + WARD,data = match.data(m.out))
