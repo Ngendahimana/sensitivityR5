@@ -324,7 +324,7 @@ From the table above we observe designing an observational study such that 2 con
 
 ## `binarysens2` function.
 
-The `rbounds`package has implimented method developed by Rosenbaum for binary outcomes sensitivity analyis using the `binarysens` function. In fact , `binarysens2` gets most of its coding inspiration from `binarysens2`. What this function adds on is the ability to do sensitivity analysis using other algorithms that `binarysens`is currently unable to intaract with. In the sections that follow we illustrate how to use `binarysens2` with objects from various packages.
+The `rbounds` package has implimented method developed by Rosenbaum for binary outcomes sensitivity analyis using the `binarysens` function. In fact , `binarysens2` gets most of its coding inspiration from `binarysens2`. What this function adds on is the ability to do sensitivity analysis using other algorithms that `binarysens`is currently unable to intaract with. In the sections that follow we illustrate how to use `binarysens2` with objects from various packages.
 
 ### Using `matchIt` objects.
 
@@ -337,3 +337,4 @@ binarysens2(x=m.out,y ="VOTED98", Gamma=2, GammaInc=.1)
 
 ```
 
+The graph above plots the p-value upper bounds corresponding to various $\Gamma$ parameters. The cordinates displayed on the plot refers tot the maximum bias allowable under a specified significance level ($\alpha$) beyond which the significant findings of true treatment effect can be attributed to unmeasured biases.
