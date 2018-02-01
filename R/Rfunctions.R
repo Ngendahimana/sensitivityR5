@@ -775,7 +775,7 @@ multiControlSens = function(X,outcomeName,Gamma,GammaInc,n_contrl){
   treat = data1[which(row.names(data1) %in% rownames(m.out$match.matrix)),][,outcomeName]
   k = list()
   for(i in 1:dim(m.out$match.matrix)[2]){
-    k[[i]] = data1[as.vector(m.oult$match.matrix[,i]),outcomeName]
+    k[[i]] = data1[as.vector(m.out$match.matrix[,i]),outcomeName]
     #assign((paste0("c",i)),data1[as.vector(m.out$match.matrix[,i]),treat])
   }
   data2 = as.data.frame(cbind(treat,do.call(cbind, k,n_contrl)))
