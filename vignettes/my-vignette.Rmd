@@ -338,3 +338,83 @@ binarysens2(x=m.out,y ="VOTED98", Gamma=2, GammaInc=.1)
 ```
 
 The graph above plots the p-value upper bounds corresponding to various $\Gamma$ parameters. The cordinates displayed on the plot refers tot the maximum bias allowable under a specified significance level ($\alpha$) beyond which the significant findings of true treatment effect can be attributed to unmeasured biases.
+
+## `pens2` function
+
+This function is meant to facilitate sensitivity analysis when you have a continous outcome. Again, unlike the current function in `rbounds`, this package is meant to handle objects from multiple matching algorithms including cardinality matching. In the sections that follow we illustrate how to use it to perform sensitivity analysis with objects from `MatchIt` and `designMatch` packages.
+
+### with `MatchIt` objects
+
+We use the lalonde data in this illustration. Suppose you perfom an optimal match on observed covariates on, then you would execute the following code.  
+
+```{r match1_matchit}
+data("lalonde",package = "Matching")
+m.out = matchit(treat ~ age  + educ +  black + hisp +married + nodegr + re74  + re75  +
+u74 + u75, family=binomial, data = lalonde, method = "nearest")
+
+```
+
+Ideally, the next step, which we skip here, would be to assess balance of baseline covariates using tools such as the rubins plot and love plots and finally estimate an effect. To perfom sensitivity analysis with `pens2`, you then need to pass a `matchIt` object, the estimated treatment effect, name of the outcome variable and the maximum value of the Rosenbaum sensitivity parameter. 
+
+```{r sens_cont}
+mod = lm(re78~age  + educ +  black + hisp +married + nodegr + re74  + re75  +u74 + u75,data = match.data(m.out))
+
+sens_object = pens2(x = m.out, y="re78",Gamma = 2, GammaInc = 0.1,est = 629.7)
+
+```
+
+The `pens2` function returns a list of items that include a table of bounds for the range of sensitivity parameters passed to the function. To object the table, you can call it from the list as follows
+
+```{r sens_cont_results}
+
+kable(sens_object$bounds)
+```
+
+### with `designMatch` objects.
+
+If on the other hand you have chosen to do cardinality matching, which optimizes on sample size under constraints of covariate balance, then you would follow the same steps as in section above. First perfom matching with the `designMatch` package;
+
+```{r designMatch}
+
+data("lalonde",package = "designmatch")
+library(designmatch)
+attach(lalonde)
+## Treatment indicator
+t_ind = treatment
+## Distance matrix
+dist_mat = NULL
+## Subset matching weight
+subset_weight = 1
+## Moment balance: constrain differences in means to be at most .05 standard deviations apart
+mom_covs = cbind(age, education, black, hispanic, married, nodegree, re74, re75)
+mom_tols = round(absstddif(mom_covs, t_ind, .05), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+## Fine balance
+fine_covs = cbind(black, hispanic, married, nodegree)
+fine = list(covs = fine_covs)
+## Exact matching
+exact_covs = cbind(black)
+exact = list(covs = exact_covs)
+## Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+## Match
+out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom, fine = fine, exact = exact, solver = solver)
+
+```
+
+Note in this matching scheme, we have specified that we are fine matching on marital status,race e.t.c. These specifications are all optional. After matchin , you can then call the `pens2`to perform sensitivity analysis.
+
+```{r pens2_cardMatch}
+
+cardMatch = pens2(x = out, y="re78",Gamma = 2, GammaInc = 0.1,est = 234,treat = "treatment",data = lalonde)
+
+kable(head(cardMatch$bounds,5))
+detach(lalonde)
+
+```
+
+
+
