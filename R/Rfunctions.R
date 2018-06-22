@@ -339,7 +339,8 @@ edaTable = function(baselinevars, outcomeVar, data) {
 
 #' detach(lalonde)
 
-pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,treat)
+pens2 =function (x, y = NULL, est = NULL, Gamma = 2, GammaInc = 0.1,
+  data = NULL, treat)
 {
   if (length(x) == 1) {
     ctrl <- x
@@ -356,46 +357,43 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
         trt <- x$mdata$Y[x$mdata$Tr == 0]
       }
     }
-    else if(class(x) == "matchit"){
-      if(missing(est)){
+    else if (class(x) == "matchit") {
+      if (missing(est)) {
         stop("Est parameter missing")
       }
       else if (est > 0) {
-        trt = (x$model$data[row.names(x$match.matrix),])[[y]]
-        ctrl = (x$model$data[x$match.matrix[,1],])[[y]]
+        trt = (x$model$data[as.numeric(row.names(x$match.matrix)),])[[y]]
+        ctrl = (x$model$data[as.numeric(x$match.matrix[, 1]), ])[[y]]
       }
       else {
-        ctrl = (x$model$data[row.names(x$match.matrix),])[[y]]
-        trt = (x$model$data[x$match.matrix[,1],])[[y]]
+        ctrl = (x$model$data[row.names(x$match.matrix),
+          ])[[y]]
+        trt = (x$model$data[x$match.matrix[, 1], ])[[y]]
       }
-
     }
-
-    else if(class(x) == "list"){
-      if(missing(est)|missing(data)){
+    else if (class(x) == "list") {
+      if (missing(est) | missing(data)) {
         warning("Est or Data not specified")
       }
-
       else {
-        data = dplyr::arrange(data,desc(data[[treat]]))
+        data = dplyr::arrange(data, desc(data[[treat]]))
         rownames(data) = 1:dim(data)[1]
         if (est > 0) {
-          trt = (data[as.character(x$t_id),])[[y]]
-          ctrl = (data[as.character(x$c_id),])[[y]]
+          trt = (data[as.character(x$t_id), ])[[y]]
+          ctrl = (data[as.character(x$c_id), ])[[y]]
         }
         else {
-          ctrl = (data[as.character(x$t_id),])[[y]]
-          trt = (data[as.character(x$c_id),])[[y]]
+          ctrl = (data[as.character(x$t_id), ])[[y]]
+          trt = (data[as.character(x$c_id), ])[[y]]
         }
       }
-
     }
   }
-  # Actual computations
   gamma <- seq(1, Gamma, by = GammaInc)
   m <- length(gamma)
   pvals <- matrix(NA, m, 2)
   diff <- trt - ctrl
+  diff <- na.omit(diff)
   S <- length(diff)
   diff <- diff[diff != 0]
   ranks <- rank(abs(diff), ties.method = "average")
@@ -420,7 +418,7 @@ pens2 = function (x, y = NULL, est = NULL,Gamma = 2, GammaInc =0.1,data = NULL,t
   msg <- "Rosenbaum Sensitivity Test for Wilcoxon Signed Rank P-Value \n"
   note <- "Note: Gamma is Odds of Differential Assignment To\n Treatment Due to Unobserved Factors \n"
   Obj <- list(Gamma = Gamma, GammaInc = GammaInc, pval = pval,
-              msg = msg, bounds = bounds, note = note)
+    msg = msg, bounds = bounds, note = note)
   class(Obj) <- c("rbounds", class(Obj))
   Obj
 }
