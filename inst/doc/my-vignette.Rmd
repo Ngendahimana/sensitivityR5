@@ -1,5 +1,5 @@
 ---
-title: " A Package to assess Rubin rules, perform sensitivity analysis using designmatch,Match and Matchit objects directly "
+title: " A Package to assess Rubin rules"
 author: "David N"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
