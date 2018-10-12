@@ -17,6 +17,40 @@ ds_function(x, sf = 1/3, Card_Dat = NULL)
 This function estimates design sensitivity parameter associated with a list of matching algorithms.
 }
 \examples{
+# Implementing different types of matching using matchit package
+m.out_Nrst <- matchit(exposure~V2+V3+V5+V6+V8+V9,data=dat, method = "nearest", distance = "logit",replace = TRUE ,print = FALSE,ratio = 1)
+m.out_NrstCAL <- matchit(exposure~V2+V3+V5+V6+V8+V9,data=dat, method = "nearest", distance = "logit",replace = TRUE,print = FALSE,ratio = 1,caliper=0.2)
+m.out_optimal <- matchit(exposure~V2+V3+V5+V6+V8+V9,data=dat, method = "optimal", distance = "logit",replace =TRUE,print = FALSE,ratio = 1)
+m.out_genetic <- matchit(exposure~V2+V3+V5+V6+V8+V9,data=dat, method = "genetic", distance = "logit",replace = TRUE,print = FALSE,ratio = 1,unif.seed=1945, int.seed=1906)
+
+
+# Implementing cardinality matching
+# Solver options
+t_max = 60*5
+solver = "glpk"
+approximate = 1
+solver = list(name = solver, t_max = t_max, approximate = approximate,round_cplex = 0, trace = 0)
+Card_Dat = dat[order(dat$exposure==1, decreasing = TRUE), ]
+Card_Dat$`.distance` <- (glm(exposure~V2+V3+V5+V6+V8+V9, data = Card_Dat ,family = binomial(link="logit")))$fitted.values
+
+attach(Card_Dat)
+t_ind = exposure
+# Distance matrix
+dist_mat = NULL
+subset_weight = 1
+
+## Setting balance criteria
+mom_covs = cbind(.distance,V2,V3,V5,V6,V8,V9)
+mom_tols = round(absstddif(mom_covs, t_ind, .1), 2)
+mom = list(covs = mom_covs, tols = mom_tols)
+## Creating cardinality matching object
+m.out_dsnMatch = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom,solver = solver)
+# Assessing balance
+t_id1 = m.out_dsnMatch$t_id
+c_id1 = m.out_dsnMatch$c_id
+dsn_bal = meantab(mom_covs, t_ind, t_id1, c_id1)[,6]
+Card_Dat_A = rbind(Card_Dat[t_id1,],Card_Dat[c_id1,])
+detach(Card_Dat)
 arg.list1 = list("a"=m.out_Nrst , "b"=m.out_NrstCAL)
 arg.list2= list("a"=m.out_Nrst , "b"=m.out_NrstCAL, "c"=m.out_dsnMatch, "d"=m.out_optimal)
 k=ds_function(arg.list2,Card_Dat = Card_Dat)
