@@ -1,5 +1,5 @@
 ---
-title: " A Package to assess Rubin rules"
+title: "Designing an Observational Study: Selecting a matching algorithm,assessment of Rubin balance recommendations & sensitivity analysis"
 author: "David N"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette

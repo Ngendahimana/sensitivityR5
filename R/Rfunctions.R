@@ -1,3 +1,146 @@
+
+
+#' Estimating design sensitivity.
+#'
+#' This function estimates design sensitivity parameter associated with a list of matching algorithms.
+#' @param x A list of matched sampling algorithms.
+#' @param sf  A fraction used to split the entire matched sample into planning sample (to estimate design sensitivity) and analysis sample (for outcome analysis).
+#' @param Card_Dat Dataframe passed to the function implementing cardinality matching. Passed to \code{ds_function} only if cardinality matching is one of the matching algorithms to be evaluated
+#' @export
+#' @examples
+#' arg.list1 = list("a"=m.out_Nrst , "b"=m.out_NrstCAL)
+#' arg.list2= list("a"=m.out_Nrst , "b"=m.out_NrstCAL, "c"=m.out_dsnMatch, "d"=m.out_optimal)
+#' k=ds_function(arg.list2,Card_Dat = Card_Dat)
+#' k$designSensitivity
+
+
+ds_function <-function (x,sf = 1/3,Card_Dat=NULL)
+{
+
+  set.seed(1)
+
+  if(sum(unlist(lapply(x,class)) %in%c("matchit","list")) !=length(unlist(lapply(x,class)))){
+    stop("All objects must be of class matchit or list")
+  }
+  else{
+    x1=x[unlist(lapply(x,class))=="matchit"]
+    unmatchedData = x1$a$model$data
+    ds_df1 = list()
+    analysisDataframe1 = list()
+    #print("... Design Sensitivity Results ...")
+
+    for(i in 1:length(x1)){
+      dat = x1[[i]]$model$data
+      ctrlUnits = dat[as.numeric(as.vector(x1[[i]]$match.matrix[,1])),]
+      trtUnits = dat[as.numeric(row.names(x1[[i]]$match.matrix)),]
+      ctrlUnits$pair_id = c(1:nrow(ctrlUnits))
+      trtUnits$pair_id = c(1:nrow(trtUnits))
+
+      matchDat = rbind(trtUnits,ctrlUnits) # matched data with pair_ids
+      ctrl_outcomes = ctrlUnits[,c("pair_id","Y2")]
+      trt_outcomes = trtUnits[,c("pair_id","Y2")]
+
+      matchDat_outcomes= left_join(trt_outcomes,ctrl_outcomes,by = "pair_id")
+      names(matchDat_outcomes)[c(2,3)]<-c("trt_outcomes","ctrl_outcomes")
+      matchDat_outcomes = na.omit(matchDat_outcomes)
+      matchDat_outcomes$diff = matchDat_outcomes$trt_outcomes-matchDat_outcomes$ctrl_outcomes
+
+      matchDat_plan = sample_n(matchDat_outcomes,floor(sf*nrow(matchDat_outcomes)))
+      rownames(matchDat_plan) = c(1:nrow(matchDat_plan))
+      matchDat_analysis = subset(matchDat,!(pair_id %in% matchDat_plan$pair_id))
+
+      sumlogicP1 = function(df,diff){
+        x1 =sample(1:(nrow(df)-2),1)
+        x2 =sample((x1+1):(nrow(df)),1)
+        sum(df[x1,diff],df[x2,diff])>0
+      }
+
+      p1 = mean(replicate(1000,sumlogicP1(matchDat_plan,"diff")))
+      #ds_df[i] = p1/(1-p1)
+      ds_df1[[i]] = ifelse((p1/(1-p1))<1,1,(p1/(1-p1)))
+
+      analysisDataframe1[[i]] = matchDat_analysis
+
+    }
+
+    # CARDINALITY MATCHING
+    ds_df2 = list()
+    analysisDataframe2 =list()
+    x2=x[unlist(lapply(x,class))=="list"]
+
+    if(length(x2)==0)
+    {
+      ds_df =ds_df1
+      names(ds_df) <- names(x)
+      names(analysisDataframe1)=names(x)
+      ds_df2=data.frame(matrix(unlist(ds_df), nrow=length(x), byrow=T),stringsAsFactors=FALSE)
+      ds_df2$Algorithm = names(x)
+      names(ds_df2) = c("Design.Sensitivity","Algorithm")
+      ds_df2 = ds_df2[,c("Algorithm","Design.Sensitivity")]
+      ds_df2 = ds_df2[order(ds_df2$Design.Sensitivity),]
+      dataframes = analysisDataframe1
+      names(dataframes)=names(x)
+
+
+    }
+
+    else
+    {
+
+      for(i in 1:length(x2)){
+
+        ctrlUnits = Card_Dat[x2[[i]]$c_id,]
+        trtUnits = Card_Dat[x2[[i]]$t_id,]
+        ctrlUnits$pair_id = c(1:nrow(ctrlUnits))
+        trtUnits$pair_id = c(1:nrow(trtUnits))
+
+        matchDat = rbind(trtUnits,ctrlUnits) # matched data with pair_ids
+        ctrl_outcomes = ctrlUnits[,c("pair_id","Y2")]
+        trt_outcomes = trtUnits[,c("pair_id","Y2")]
+
+        matchDat_outcomes= left_join(trt_outcomes,ctrl_outcomes,by = "pair_id")
+        names(matchDat_outcomes)[c(2,3)]<-c("trt_outcomes","ctrl_outcomes")
+        matchDat_outcomes = na.omit(matchDat_outcomes)
+        matchDat_outcomes$diff = matchDat_outcomes$trt_outcomes-matchDat_outcomes$ctrl_outcomes
+
+        matchDat_plan = sample_n(matchDat_outcomes,floor(sf*nrow(matchDat_outcomes)))
+        rownames(matchDat_plan) = c(1:nrow(matchDat_plan))
+        matchDat_analysis = subset(matchDat,!(pair_id %in% matchDat_plan$pair_id))
+
+        sumlogicP1 = function(df,diff){
+          x1 =sample(1:(nrow(df)-2),1)
+          x2 =sample((x1+1):(nrow(df)),1)
+          sum(df[x1,diff],df[x2,diff])>0
+        }
+
+        p1 = mean(replicate(1000,sumlogicP1(matchDat_plan,"diff")))
+        #ds_df[i] = p1/(1-p1)
+        ds_df2[[i]] = ifelse((p1/(1-p1))<1,1,(p1/(1-p1)))
+        analysisDataframe2[[i]] = matchDat_analysis
+
+      }
+      ds_df = c(ds_df1,ds_df2)
+      names(ds_df) <- names(x)
+      ds_df2=data.frame(matrix(unlist(ds_df), nrow=length(x), byrow=T),stringsAsFactors=FALSE)
+      ds_df2$Algorithm = names(x)
+      names(ds_df2) = c("Design.Sensitivity","Algorithm")
+      ds_df2 = ds_df2[,c("Algorithm","Design.Sensitivity")]
+      ds_df2 = ds_df2[order(ds_df2$Design.Sensitivity),]
+      dataframes = c(analysisDataframe1,analysisDataframe2)
+      names(dataframes)=names(x)
+    }
+
+  }
+
+
+  Obj <- list(designSensitivity =ds_df2, AnalysisDataFrames = dataframes,UnmatchedData =unmatchedData )
+  class(Obj) <- "DSensitivity"
+  Obj
+
+}
+
+
+
 #' Assessing the three Rubin Rules.
 #'
 #' This function allows you to assess how sensitive your results are to unmeasured variable.
