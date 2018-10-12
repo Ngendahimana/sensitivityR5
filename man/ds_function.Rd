@@ -43,8 +43,10 @@ subset_weight = 1
 mom_covs = cbind(.distance,V2,V3,V5,V6,V8,V9)
 mom_tols = round(absstddif(mom_covs, t_ind, .1), 2)
 mom = list(covs = mom_covs, tols = mom_tols)
+
 ## Creating cardinality matching object
 m.out_dsnMatch = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,mom = mom,solver = solver)
+
 # Assessing balance
 t_id1 = m.out_dsnMatch$t_id
 c_id1 = m.out_dsnMatch$c_id
