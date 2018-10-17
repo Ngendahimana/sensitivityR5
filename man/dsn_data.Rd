@@ -4,7 +4,7 @@
 \name{dsn_data}
 \alias{dsn_data}
 \title{Simulated dataset to illustrate how \code{ds_function} in the SensitivityR5 package works}
-\format{A data frame with 100 rows and 11 variables. 300 treated  and 700 controls :
+\format{A data frame with 1000 rows and 11 variables. 300 treated  and 700 controls :
 \describe{
   \item{V1 - V6, V8}{Continious variables}
   \item{V7,V9}{Binary variables}
