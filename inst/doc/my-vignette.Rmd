@@ -1,6 +1,6 @@
 ---
-title: "Designing an Observational Study: Selection of a matching algorithm, assessment of Rubin balance recommendations & sensitivity analysis"
-author: "David N"
+title: "Selection of a Matched Sampling Algorithm,Sensitivity Analysis and Assessment of Rubin Balance Recommendations"
+author: "David Ngendahimana"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -26,57 +26,53 @@ library(tidyr);library(ggplot2);library(designmatch);library(MatchIt);library(Ma
 
 
 
-#Introduction.
+## Introduction.
 
 Over the past few decades, technology has made it easier for researchers to access variety of  observational data. Such data include information collected from patient medical records, national surveys et al. Availability of this data provides opportunities for exploring important research questions, however to do so one has be careful in designing studies based on these data. A common use of observation study is in estimating treatment effect. This typically involves defining a variable to measured exposure and then using it to identify a treatment and control group. Since the gold standard for estimating a treatment effect is to use data collected from a randomized clinical trial, observational data has to be preprocessed using observational study design algorithms to ensure data used to make treatment effect is as similar as possible to data that would have been obtained from a clinical trial. 
 
-One of the assumptions made when estimating treatment effect from observational studies is what is called the the ignorabiltiy assumption,that is, only the observed covariates are sufficient to explain any meaningful differences between the treatment and control groups. The consequence of this assumption is that if the groups being compared are similar on average, on these observed covariates , then any differences in the outcome being studied is due to treatment- the only distinguishing factor between the groups being compared. The design phase of an observational study is usually focused on achieving the best possible balance of observed covariates between the treated and control group. Several design algorithms have been proposed and R packages that implement them are widely available.  The main steps during the design phase of an observational study are:
+One of the assumptions made when estimating treatment effect from observational studies is what is called the the ignorabiltiy assumption,that is, only the observed covariates are sufficient to explain any meaningful differences between the treatment and control groups. The consequence of this assumption is that if the groups being compared are similar on average, on these observed covariates , then any differences in the outcome being studied is due to treatment- the only distinguishing factor between the groups being compared. The design phase of an observational study is usually focused on achieving the best possible balance of observed covariates between the treated and control group. Several design algorithms have been proposed and R packages that implement them are widely available.  In his 2008 paper , Stuart et al provides a detailed description of the major design algorithms and R packages that implement them. 
 
-1. Determine variables that confounder the relationship between treatment and outcome
-2. Using confounders in step 1, compute a metric (e.g propensity score) to be used to measure distance between any two observations
-3. Match observation based on the metric in step 2
-4. Assess balance of variables in step 1 across treatment and control group. If balance is poor repeat step 2-4.
-5. Estimate the treatment effect in the preprocessed sample
+When designing an observation study, its recommended that one try different matching algorithms (i.e.solutions) and pick one that gives the best balance. With various matching algorithms housed in different R packages , for sometime , it was hard to compare across design methods. To easy this process, Greifer et al developed the `cobalt` package that interacts seamlessly  with objects from `Matching` and `MacthIt` packages and generate key balance summary statistics. However, it is often not trivial to identity the a matching algorthm to use especially when more than one of those algorithm differ marginally on key balance statistics.
 
-In his 2008 paper , Stuart et al provides a detailed description of the major design algorithms and R packages that implement them. 
+The main critique of observational studies that use matched sampling design methods is that treatment effect estimates obtained are premised on the assumption that observed variables are sufficient to explain the differences between treated and control group. To deal with this criticism , Rosenbaum developed a sensitivity analysis framework that , if a significant treatment effect exists, computes a parameter to quantify a bias magnitude due to unmeasured confounders that would be required to nullify significant results. Presenting results of these sensitivity analysis allows the reader to make an informed decision on how much faith to place in your findings. A significant portion of sensitivity methods developed by Rosenbaum has been implemented in the `rbounds`package (Keele,2008). However `rbounds` functions only interact with objects from the `Matching` package. The package does not also implement a sensitivity analysis method for time to event outcomes. To perform sensitivity analysis involving matched sets, Rosenbaum developed two packages `sensitivitymv` and `sensitivitymw`(Rosenbaum,2013). These two packages also provide more robust test statistic that increase the power of sensitivity. However, to perform sensitivity analysis using these packages require reshaping your data set to conform to a certain format.
 
-When designing an observation study, one usually has to run different matching algorithm and pick one that gives the best balance. With various matching algorithms housed in different R packages , for sometime , it was hard to compare across design methods. To easy this process, Greifer et al developed the `cobalt` package that interacts seamlessly  with objects from `Matching` and `MacthIt` packages and generate key balance summary statistics on.
+## Why use this package ?
 
-The main critique of observational studies that use matched sampling design methods is that treatment effect estimates obtained are premised on the assumption that observed variables are sufficient to explain the differences between treated and control group. To deal with this criticism , Rosenbaum developed a sensitivity analysis framework that , if a significant treatment effect exists, computes a parameter to quantify a bias magnitude due to unmeasured confounders that would be required to nullify significant results. Presenting results of these sensitivity analysis allows the reader to make an informed decision on how much faith to place in your findings.
+### Select a matched sampling design most robust to unmeasured selection bias from a set of competitive designs.
 
-A significant portion of sensitivity methods developed by Rosenbaum has been implemented in the `rbounds`package (Keele,2008). However `rbounds` functions only interact with objects from the `Matching` package. The package does not also implement a sensitivity analysis method for time to event outcomes. To perform sensitivity analysis involving matched sets, Rosenbaum developed two packages `sensitivitymv` and `sensitivitymw`(Rosenbaum,2013). These two packages also provide more robust test statistic that increase the power of sensitivity. However, to perform sensitivity analysis using these packages require reshaping your data set to conform to a certain format.
+Recent advancements in computer technology has led to new matched sampling algorithms currently implemented in R. Among the most recent include cardinality and genetic matching. Others that interact with our package such as optimal and nearest neighbor matching are commonly used. When used to to produced matched samples for the same study, the quality of matches produced by each of this algorithms differ primarirly due to the fact that when forming matches each of this algorithms seeks to optimize different objective functions. This difference in quality of matches produced impacts the design of a study in terms of its overall robustness to unmeasured selection bais. Specifically, designs produced by these algorithms differ in terms of their robustness to hidden bias.The workhorse function of this package automates a selection strategy  to guide selection of the most robust design from a set of designs based on various competitive algorithms.
 
-It is important to note that this package does not replace the highly sophisticated matching and  sensitivity tools in the packages described above. What this package does is to bridge the most common matching packages to various sensitivity packages where such connections do not exist and would require more work on the part of the analyst.
+### Easy sensitivity analyisis when matched sampling is not necessary done with `Matching` package.
 
-# Why use this package ?
-
-## Easy sensitivity analyisis when matched sampling is not necessary done with `Matching` package.
-Our packages interacts seamlessly with objects from packages that implement matching methods not contained in the `Matching` package, specifically `MatchIt`(Ho et al 2007) and `designmatch`(Zubezarreta et al 2016). This package therefore gives the user the freedom to perform sensitivity analysis using output from any matching package. 
+Although there are several R packages that implement different matched sampling algorithms, there is no packages that interacts universally with these matching package to implement sensitivity to hidden bias analysis. Currently to perform sensitivity analysis to hidden bias using objects from some matching packages such `MatchiIt` or `designmatch` can be time consuming and complicated depending on ones confort with R programming. The `rbounds` package which is commonly used to perfom sensitivity analysis currently accepts objects from `Matching` package only. This package gives the user the freedom to perform sensitivity analysis using output from any matching package by simply passing the object to a dedicated function of this package. 
 
 
-## Sensitivity analysis for matched sets from any package.
-Unlike `rbounds` which implements sensitivity analysis for matched pairs only , this package contains functions which accept objects from various matching packages that produce matched sets. These functions will then ,simultaneously, transforms and performs sensitivity analysis using these objects. Using this package in this way can save significant time require to transform objects from various packages to create valid inputs for `sensitivitymv` or `sensitivitymw`, the two packages that perform sensitivity analysis for matched sets.
+### Sensitivity analysis for matched sets from any package.
+Unlike `rbounds` which implements sensitivity analysis for matched pairs only, this package contains functions which accept objects from various matching packages in case matched sets rather than matched pair are desirable for a given design. Specific functions in this package  transforms and performs sensitivity analysis using these objects from different matching packages. Using this package can save time required to transform objects from matching packages into valid inputs for `sensitivitymv` or `sensitivitymw`, the two packages that perform sensitivity analysis for matched sets.
 
-## Balance and Sensitivity Analysis Plots.
-Most matching packages contain plots and tables useful in judging quality of matches obtained after matching, the most common being the love plot (Thomas Love). This package adds to these tools by providing sensitivity analysis and amplification plots(Rosenbaum ,2013) to help visualize and interpret findings.
+### Balance and Sensitivity Analysis Plots.
+Most matching packages contain plots and tables useful in judging quality of matches obtained after matching, the most common being the love plot (Thomas Love). This package adds to these tools by providing sensitivity analysis plots(Rosenbaum ,2013) and plots to assess balance recommendations advocated by Rubin. These plots are meant to help visualize and interpret findings.
 
 
-# Using the package.
+## Using the package.
 
-This package contains four main functions `rubinrules()`, `pens2()`, `binarysens2`, `t2event()` . Other auxilliary functions in the package include  `ampPlot()` and `eda()`. In the sections that follow , a detailed description of how each is used is given.
-
-Currently this package is housed on github therefore to install it use the following code:
+This package contains four main functions, `ds_function` , `pens2()`, `binarysens2`, `t2event()`,`rubinrules()`. Other auxilliary functions in the package include  `ampPlot()` and `eda()`. In the sections that follow , a detailed description of how each fucntion can be used is given. It is important to note that this package does not replace the highly sophisticated matching and sensitivity tools in the packages described above. What it seeks to accomplish is to bridge the most common matching packages to various sensitivity packages where such connections do not exist and would require more work on the part of the analyst. Currently this package is housed on github therefore to install it use the following code:
 
 
 
 ```{r packageinstall,message=FALSE}
 library(devtools)
 devtools::install_github("Ngendahimana/SensitivityR5")
-
+library(SensitivityR5)
 ```
 
+### `ds_function`
+This function accepts matching objects from `MatchIt` package which implements various matching aglorithms such optimal, full and nearest neighbour matching. It also accepts objects from the `designmatch` that implements cardinality matching. Using a list of objects passed to it `ds_function` estimates the design sensitivity parameter to appraise matching algorithms with a portion of the matched samples produced by algorithms. Rosenbaum details the computation of design sensitivity which are implemented by this function.
 
-## rubinRules
+To illustrate the use of this function, we simulate a dataset 
+
+
+### rubinRules
 
 `rubinRules()` is a function that can be use to evaluate the three balance meusures suggested by Rubin (2001) and are based on the theory published in another paper by Rubin and Thomas (2006). Rubin Provides three guidelines to ensure that the results of regression adjustment - often conducted in the analysis phase of observational studies to clear any residual imbalances - are valid. The three guidelines are: 
 
@@ -88,8 +84,6 @@ devtools::install_github("Ngendahimana/SensitivityR5")
 An example of how to use the `rubinRules` function to assess these guidelines is illustrated below
 
 ```{r rubinRules,fig.width = 5, fig.asp =1,message=FALSE,warning=FALSE}
-
-library(SensitivityR5)
 
 data("toy",package = "SensitivityR5")
 psmodel <- glm(treated ~ covA + covB + covC + covD + covE + covF + Asqr + BC + BD, family=binomial(), data=toy)
@@ -116,13 +110,13 @@ k$RUBIN3
 ```
 
 
-## Love Plot
+### Love Plot
 
 Although Love plot for assessing standardized balance measure for objects produced by `Matching ` and `MatchIt` has already been implemented in `Cobalt` package through the Love.plot function, this function cannot interact with `designmatch` object directly. On the other hand the love plot object currently implemented in  `designmatch` package is not a `ggplot` objects and therefore makes it hard to customize as desired. The Love plot function in this package allows you to generate ggplot Love figures using objects from any of the three matching packages including `designmatch` package.  
 
 The code chunk below shows how to accomplish this.
 
-### Using `designmatch` objects 
+#### Using `designmatch` objects 
 
 This example uses to design match which implements cardinality matching which balances variables directly rather than using a summary measure to quantify the distance between observations. This matching optimizes on the sample size rather than simply a distance measure like propensity score. `designmatching`package also enables other more sophisticated matching algorithms such as fine, near-fine balancing, exact matching and near exact matching. These algoritms can be appealing in various circumstances, especially  when the researcher wishes to incorporate subject matter understanding of the question at hand.
 
@@ -192,11 +186,11 @@ p+theme_bw()+geom_vline(xintercept = -0.1)+ geom_vline(xintercept = 0.1) +theme(
 
 Object from `MatchIt` and `Matching` packages can also be directly used with the `love_plot` function. You can also use the love plot function to extrac other important balance measures. We illustrate this using optimal matching functionality within the `MatchiIt`package... 
 
-## Sensitivity Analysis.
+### Sensitivity Analysis.
 
 As mentioned earlier, one of the aims of this package is to facilitate seamless transition between analysis of an observational study to perfoming sensitivity analysis. In the section that follow we illustrate how to use functions within this package to accomplish this task.
 
-### `pens2` Function.
+#### `pens2` Function.
 This function is meant to facilitate sensitivity analysis for continous outcomes. There is  a similar function in `rbounds` package that implements this method howevever `rbounds` interacts only with `Matching` package objects which implements limited methods of matched sampling.
 
 Using `lalonde` dataset , the code below illustrates how to do sensitivity analysis after implementing an optimal matching algorithm.
@@ -267,7 +261,7 @@ detach(lalonde)
 ```
 
 
-## `Survsens` function.
+### `Survsens` function.
 
 At the time of writing this vignette there are no sensitivity package with a function that implements sensitivity analysis for time to event outcomes. `Survsens` performs this analysis and is largerly based on lecture notes provided by Prof.Thomas Love in his travelling course on design of observational studies. We illustrate how to use this function using made up data called `toy` that is part of this package. To run sensitivity analysis with this function, you first have to perfom matching using a matching package of your choice and assess quality of your match. For example we can first match using `MatchIt` package with the following code
 
@@ -293,7 +287,7 @@ res_Surv =Survsens(x= match.it,data =toy,exp='treated',outcome = 'out2',failtime
 kable(res_Surv$bounds)
 ```
 
-## `MultiControlSens` function
+### `MultiControlSens` function
 
 Currently `sensitivitymw` is the only package that implements sensitivity analysis for in matched sampling designs that allow matched sets rather than simply matched pair. The `MultiControlSens` complements the `sensitivitymw` package by processing objects from various matching packages to allow seamless interactions during sensitivity analysis. For example, using the `lalonde` data , if we match 2 controls to 1 treated using the `optimal` option in `matchit` function , we can perform sensititivity analysis using the following code:
 
@@ -322,11 +316,11 @@ kable(res1$pvalues)
 From the table above we observe designing an observational study such that 2 control can be matched to a single case then the odds of occurence of an unobserved variable in one exposure group would have to 1.3 the odds of occurence in the other exposure group to nullify any qualitative findings of significance treatment difference between these exposure groups.
 
 
-## `binarysens2` function.
+### `binarysens2` function.
 
 The `rbounds` package has implimented method developed by Rosenbaum for binary outcomes sensitivity analyis using the `binarysens` function. In fact , `binarysens2` gets most of its coding inspiration from `binarysens2`. What this function adds on is the ability to do sensitivity analysis using other algorithms that `binarysens`is currently unable to intaract with. In the sections that follow we illustrate how to use `binarysens2` with objects from various packages.
 
-### Using `matchIt` objects.
+#### Using `matchIt` objects.
 
 ```{r, binsens}
 data("GerberGreenImai",package = "Matching")
@@ -339,11 +333,11 @@ binarysens2(x=m.out,y ="VOTED98", Gamma=2, GammaInc=.1)
 
 The graph above plots the p-value upper bounds corresponding to various $\Gamma$ parameters. The cordinates displayed on the plot refers tot the maximum bias allowable under a specified significance level ($\alpha$) beyond which the significant findings of true treatment effect can be attributed to unmeasured biases.
 
-## `pens2` function
+### `pens2` function
 
 This function is meant to facilitate sensitivity analysis when you have a continous outcome. Again, unlike the current function in `rbounds`, this package is meant to handle objects from multiple matching algorithms including cardinality matching. In the sections that follow we illustrate how to use it to perform sensitivity analysis with objects from `MatchIt` and `designMatch` packages.
 
-### with `MatchIt` objects
+#### with `MatchIt` objects
 
 We use the lalonde data in this illustration. Suppose you perfom an optimal match on observed covariates on, then you would execute the following code.  
 
@@ -370,7 +364,7 @@ The `pens2` function returns a list of items that include a table of bounds for 
 kable(sens_object$bounds)
 ```
 
-### with `designMatch` objects.
+#### with `designMatch` objects.
 
 If on the other hand you have chosen to do cardinality matching, which optimizes on sample size under constraints of covariate balance, then you would follow the same steps as in section above. First perfom matching with the `designMatch` package;
 
