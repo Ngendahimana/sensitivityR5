@@ -35,3 +35,28 @@
 #' @source \url{https://sites.google.com/a/case.edu/love-500/home/data-and-code}
 "toy"
 
+
+#' Simulated dataset to illustrate how \code{ds_function} in the SensitivityR5 package works
+#'
+#' The data set has one outcome, one exposure and 9 covariates, with no missing observations anywhere.
+#'
+#' @format A data frame with 100 rows and 11 variables. 300 treated  and 700 controls :
+#' \describe{
+#'   \item{V1 - V6, V8}{Continious variables}
+#'   \item{V7,V9}{Binary variables}
+#'   \item{Y2}{Outcome}
+#'   \item{exposure}{Treatment indicator}
+#'   .
+#'   .
+#'   .
+#' }
+"dsn_data"
+
+
+
+
+
+
+
+
+
