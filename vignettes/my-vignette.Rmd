@@ -1,5 +1,5 @@
 ---
-title: "Designing an Observational Study: Selecting a matching algorithm,assessment of Rubin balance recommendations & sensitivity analysis"
+title: "Designing an Observational Study: Selecting a Matching Algorithm, Assessment of Rubin Balance Recommendations & Sensitivity Analysis"
 author: "David N"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
