@@ -405,7 +405,7 @@ out = bmatch(t_ind = t_ind, dist_mat = dist_mat, subset_weight = subset_weight,m
 
 ```
 
-Note in this matching scheme, we have specified that we are fine matching on marital status,race e.t.c. These specifications are all optional. After matchin , you can then call the `pens2`to perform sensitivity analysis.
+Note, in this matching scheme, we have specified that we are fine matching on marital status,race e.t.c. These specifications are all optional. After matchin , you can then call the `pens2`to perform sensitivity analysis.
 
 ```{r pens2_cardMatch}
 
